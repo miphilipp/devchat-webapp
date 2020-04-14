@@ -80,6 +80,12 @@
 			this.$logout(false)
 		}
 
+		mounted() {
+			if (this.user.id !== -1) {
+				this.getAvatarLink(this.user.id)
+			}
+		}
+
 		toggleConversationDetails(event: Event) {
 			this.isConversationDetailsVisible = !this.isConversationDetailsVisible
 		}
@@ -95,10 +101,14 @@
 			}
 		}
 
-		@Watch('user')
-		async onUserChange(newVal: User, oldVal: User) {
+		async getAvatarLink(userid: number) {
 			const token = await getMediaToken()
-			this.avatarLink = `/media/user/${newVal.id}/avatar?token=${token}&nodefault=true`
+			this.avatarLink = `/media/user/${userid}/avatar?token=${token}&nodefault=true`
+		}
+
+		@Watch('user')
+		onUserChange(newVal: User, oldVal: User) {
+			this.getAvatarLink(newVal.id)
 		}
 
 		get user(): User {
@@ -189,8 +199,9 @@
 	}
 
 	.adminIndicator {
-		border: 2px solid red;
-		color: red;
+		--indicatorColor: red;
+		border: 2px solid var(--indicatorColor);
+		color: var(--indicatorColor);
 		display: inline-block;
 		padding: 5px;
 		border-radius: 6px;
@@ -324,5 +335,28 @@
 
 	.editorList > li.active {
 		box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		nav {
+			color: white
+		}
+
+		.editorList > li {
+			border-color: #a7a7a7;
+			background: linear-gradient(to top, hsla(0, 0%, 18.97%, 0.85), #8d8d8d);
+		}
+
+		.adminIndicator {
+			--indicatorColor: rgb(208, 55, 55);
+		}
+
+		.detailsPopup {
+			box-shadow: 0 0 5px #181818;
+		}
+
+		#menu li a {
+			color: white;
+		}
 	}
 </style>

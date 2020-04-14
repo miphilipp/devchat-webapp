@@ -12,7 +12,9 @@
                 <MemberCell :member="m" :canDisplayDetails="!wantsToLeave && $store.getters.amIAdmin" :avatarLink="avatarLink"></MemberCell>
             </li>
         </ul>
-        <button class="leaveButton defaultButton" v-if="!wantsToLeave" @click="clickLeaveConversation">Unterhaltung verlassen</button>
+        <button class="leaveButton defaultButton" v-if="!wantsToLeave" @click.stop="clickLeaveConversation">
+            Unterhaltung verlassen
+        </button>
         <button class="defaultButton abortButton" v-if="wantsToLeave" @click="abortLeaving">Abbrechen</button>
         <p class="leavingHint" v-if="wantsToLeave">
             Sie sind der einzige Administrator. Wählen Sie bitte einen Nachfolger um die Unterhaltung zu verlassen.
@@ -53,7 +55,7 @@ class AdminPopup extends Vue {
         this.conversationTitle = this.$store.getters.selectedConversation.title
         this.repoURL = this.$store.getters.selectedConversation.repoURL
         this.$eventBus.$on('hide-user-selection', this.hideUserSelection)
-        this.$eventBus.$on('hide-prompt', this.confirmLeaving)
+        this.$eventBus.$on('hide-prompt', this.confirm)
 
         const token = await getMediaToken()
         this.avatarLink = `/media/user/##user##/avatar?token=${token}`
@@ -64,10 +66,7 @@ class AdminPopup extends Vue {
             return
         }
         this.showsUserSelection = false
-
-        if (users === undefined) {
-            return
-        }
+        if (users === undefined) return
 
         try {
             for (const user of users) {
@@ -104,7 +103,7 @@ class AdminPopup extends Vue {
         }
     }
 
-    async chooseMember(id: number) {
+    chooseMember(id: number) {
         if (this.wantsToLeave) {
             this.chosenMember = id
             this.waitsOnConfirmation = true
@@ -117,18 +116,18 @@ class AdminPopup extends Vue {
         this.chosenMember = 0
     }
 
-    async clickLeaveConversation() {
+    clickLeaveConversation() {
         const currentID = this.$store.getters.selectedConversation.id
         const ownId = this.$store.state.chat.self.id
         if (this.$store.getters.amIAdmin && this.$store.getters.isThereOnylOneAdmin) {
-            this.wantsToLeave = true
+             this.wantsToLeave = true
         } else {
             this.waitsOnConfirmation = true
             this.$eventBus.$emit('show-prompt', 'Möchten Sie die Unterhaltung wirklich verlassen?')
         }
     }
 
-    async confirmLeaving(choice: boolean) {
+    async confirm(choice: boolean) {
         if (this.waitsOnConfirmation === false) return
 
         if (choice === true) {
@@ -246,5 +245,20 @@ export default AdminPopup
         list-style-type: none;
         padding: 0;
         margin: 5px 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .wrapper { 
+        color: white;
+        background-color: #242d41;
+      }
+
+      .wrapper li {
+          border-color: #616161;
+      }
+
+      input {
+        background-color: rgb(230, 230, 230);
+      }
     }
 </style>

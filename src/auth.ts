@@ -102,8 +102,8 @@ async function logout(oneSided: boolean) {
     } catch (error) {
         console.error(error)
     } finally {
-        localStorage.removeItem('user')
-        localStorage.removeItem('media')
+        window.localStorage.removeItem('user')
+        window.localStorage.removeItem('media')
     }
 }
 
@@ -133,7 +133,6 @@ async function getMediaToken(): Promise<string> {
 
 async function fetchMediaToken(): Promise<MediaToken> {
     const res = await fetchJson('/mediatoken')
-    //console.log(res)
     return new MediaToken(res.token, res.expiration)
 }
 

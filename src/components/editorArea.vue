@@ -131,4 +131,11 @@
     .messageSelectionList li:hover {
         background-color: rgba(255, 255, 255, 0.74);
     }
+
+    @media (prefers-color-scheme: dark) {
+      .messageSelectionList {
+        border-top: 2px solid #d6d6d6;
+        background: linear-gradient(30deg, #798d7c, #88909e);
+      }
+    }
 </style>

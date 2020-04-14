@@ -17,7 +17,6 @@ interface IDictionary {
     [key: string]: {[key: number]: string}
 }
 
-
 const errorMap: IDictionary = {
     login: {
         1005: 'Sie sind vorübergehend gesperrt.',
@@ -66,7 +65,10 @@ const errorMap: IDictionary = {
 
     },
     sendMessage: {
-
+        2002: 'Zeitüberschreitung',
+    },
+    saveMessage: {
+        2002: 'Zeitüberschreitung',
     },
 }
 
@@ -126,6 +128,10 @@ export default {
     sendMessage: (error: ServerError | ClientError) => {
         if (error.info === undefined) return 'Ein Fehler ist aufgetreten'
         return errorMap.sendMessage[error.info.code] || 'Ein Fehler ist aufgetreten'
+    },
+    saveMessage: (error: ServerError | ClientError) => {
+        if (error.info === undefined) return 'Ein Fehler ist aufgetreten'
+        return errorMap.saveMessage[error.info.code] || 'Ein Fehler ist aufgetreten'
     },
 }
 

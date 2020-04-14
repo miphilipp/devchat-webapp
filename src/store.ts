@@ -195,7 +195,7 @@ class ChatModule extends VuexModule {
         name: data.username,
         isAdmin: false,
         hasJoined: false,
-        color: '#000',
+        colorIndex: 0,
         hasLeft: false,
         isDeleted: false,
       })
@@ -223,6 +223,7 @@ class ChatModule extends VuexModule {
       member.hasLeft = data.hasLeft !== undefined ? data.hasLeft : member.hasLeft
       member.hasJoined = data.hasJoined !== undefined ? data.hasJoined : member.hasJoined
       member.isAdmin = data.isAdmin !== undefined ? data.isAdmin : member.isAdmin
+      member.colorIndex = data.colorIndex !== undefined ? data.colorIndex : member.colorIndex
     }
   }
 

@@ -306,11 +306,6 @@
         color: #797979;
     }
 
-    ul li.selected {
-        background-color: #D8D8D8;
-        color: black;
-    }
-
     ul {
         list-style-type: none;
         color: white;
@@ -318,4 +313,40 @@
         margin-bottom: 40px;
         margin-top: 10px;
     }
+
+    @media (prefers-color-scheme: dark) {
+      .sidebar {
+          background-color: #1c232e;
+      }
+
+      .newArea > span:hover, #conversationList li:not(.active):hover, ul li.active  {
+        background-color:#333944;
+        }
+
+      ul li {
+          background-color: #262c37;
+          --placeholderColor:  rgb(59, 59, 59);
+      }
+
+      .newArea input {
+        background-color: rgb(230, 230, 230);
+      }
+
+      .newArea input::placeholder {
+        color: var(--placeholderColor);
+      }
+
+      .newArea input::-webkit-placeholder {
+        color: var(--placeholderColor);
+      }
+
+      .newArea input::-moz-placeholder {
+        color: var(--placeholderColor);
+      }
+
+      svg, h3 {
+          color: white;
+      }
+    }
+    
 </style>

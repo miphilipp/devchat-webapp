@@ -150,6 +150,7 @@ export default class App extends Vue {
         conversationId: payload.conversationId,
         hasJoined: true,
         hasLeft: false,
+        colorIndex: payload.colorIndex,
       })
     }
   }
@@ -264,6 +265,7 @@ export default class App extends Vue {
 
   syncLogout (event: StorageEvent) {
     if (event.key === 'user' && event.oldValue !== null) {
+      console.log(event.url)
       this.$logout(true)
     }
   }
@@ -372,5 +374,21 @@ export default class App extends Vue {
     height: 0; 
     width: 0;
     clear: both;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html {
+      --mainBackgroundColor: #27334d;
+    }
+
+    .modalOverlay {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .defaultButton {
+      background-color: #414141;
+      color: white;
+      border-color: #5b5b5b;
+    }
   }
 </style>

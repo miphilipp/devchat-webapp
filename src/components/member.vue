@@ -1,7 +1,7 @@
 <template>
     <div class="member-wrapper">
         <img 
-            :style='{"--indicatorColor": member.color}' 
+            :style='{"--indicatorColor": colorIndexToColor(member.colorIndex)}' 
             class="avatar" 
             :src="avatarLink.replace('##user##', member.id)" 
             alt="avatar">
@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { UserInConversation, User } from '../user'
+import { UserInConversation, User, colorIndexToColor } from '../user'
 import { deleteMember, setAdminStatus } from '../conversation'
 import { Invitation, revokeInvitation } from '../invitations'
 import Errors from '../errors'
@@ -50,6 +50,10 @@ class MemberCell extends Vue {
 
     hideActionsVisiblity() {
         this.areActionsVisible = false
+    }
+
+    colorIndexToColor(index: number): string {
+        return colorIndexToColor(index)
     }
 
     async removeUser() {

@@ -162,28 +162,18 @@ async function getMessagesOfType(
     limit = 100,
     ): Promise<Message[]> {
     let path = `/conversation/${conversationId}/messages?type=${type}&limit=${limit}`
-    if (before !== undefined) {
-        path += `&before=${before}`
-    }
+    if (before !== undefined) path += `&before=${before}`
 
     const res = await fetchJson(path)
-    const messages = res.map((m: any) => {
-        return makeMessage(m)
-    })
-    return messages
+    return res.map((m: any) => makeMessage(m))
 }
 
 async function getMessages(conversationId: number, limit: number, before?: number): Promise<Message[]> {
     let path = `/conversation/${conversationId}/messages?limit=${limit}`
-    if (before !== undefined) {
-        path += `&before=${before}`
-    }
+    if (before !== undefined) path += `&before=${before}`
 
     const res = await fetchJson(path)
-    const messages = res.map((m: any) => {
-        return makeMessage(m)
-    })
-    return messages
+    return res.map((m: any) => makeMessage(m))
 }
 
 async function reloadMessage(messageId: number, conversationId: number): Promise<Message> {

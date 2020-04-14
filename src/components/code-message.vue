@@ -171,4 +171,10 @@ export default CodeMessageBox
         display: block;
         background-color: var(--indicatorColor);
     }
+
+    @media (prefers-color-scheme: dark) {
+      .meta { 
+        color: white;
+      }
+    }
 </style>  

@@ -143,4 +143,18 @@
         margin-right: 25px;
         height: 30px;
     }
+
+    @media (prefers-color-scheme: dark) {
+        .chatInputOuterWrapper {
+            background-color: rgba(189, 189, 189, 0.75);
+        }
+
+        textarea::-webkit-placeholder {
+            color: black;
+        }
+
+        textarea::placeholder {
+            color: black;
+        }
+    }
 </style>

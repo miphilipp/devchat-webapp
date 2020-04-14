@@ -90,4 +90,22 @@ export default InviatationCell
     .actionArea.expanded {
         width: 60px;
     }
+
+    @media (prefers-color-scheme: dark) {
+		svg {
+            color: white;
+        }
+
+        .cell-wrapper {
+            color: gray;
+        }
+
+        .actionArea {
+            background-color: #4a4a4a;
+        }
+
+        .acceptButton {
+            background-color: #5a5a5a;
+        }
+	}
 </style>

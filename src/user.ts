@@ -8,7 +8,7 @@ interface User {
 
 interface UserInConversation extends User {
     isAdmin: boolean
-    color: string
+    colorIndex: number
     hasJoined: boolean
     hasLeft: boolean
     isDeleted: boolean
@@ -24,7 +24,7 @@ function makeInitialUser(user: User, hasJoined: boolean, isAdmin: boolean): User
         id: user.id,
         name: user.name,
         hasJoined,
-        color: '#000',
+        colorIndex: 0,
         isAdmin,
         hasLeft: false,
         isDeleted: false,
@@ -39,7 +39,7 @@ async function getUsersOfConversation(conversationId: number): Promise<UserInCon
                 id: u.id,
                 name: u.name,
                 isAdmin: u.isAdmin,
-                color: colorIndexToColor(u.colorIndex),
+                colorIndex: u.colorIndex,
                 hasJoined: u.hasJoined,
                 hasLeft: u.hasLeft,
                 isDeleted: u.isDeleted,
@@ -81,6 +81,11 @@ function colorIndexToColor(index: number): string  {
         '#FFED6F',
         '#FD7A4A',
         '#EC3651',
+        '#03588C',
+        '#118C76',
+        '#59380E',
+        '#F2CB05',
+        '#8C1F33',
     ]
 
     const i = index % colors.length
@@ -90,6 +95,7 @@ function colorIndexToColor(index: number): string  {
 export {
     User,
     UserInConversation,
+    colorIndexToColor,
     getOtherUsers,
     getUsersOfConversation,
     getUser,

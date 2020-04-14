@@ -257,7 +257,8 @@
                     this.mutateMessageInStore(this.message.id, currentCId, this.title, this.selectKey, this.text)
                     this.hasChanges = false
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error.message})
+                    const text = Errors.saveMessage(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             }
         }
@@ -447,10 +448,15 @@
 
     pre.prism-editor__code {
         background-color: var(--mainBackgroundColor) !important;
+        box-shadow: none !important;
+        border: none !important;
     }
 </style>
 
 <style scoped>
+
+    @import url("./../../node_modules/prismjs/themes/prism.css") (prefers-color-scheme: light), (prefers-color-scheme: no-preference);
+    @import url("./../../node_modules/prismjs/themes/prism-dark.css") (prefers-color-scheme: dark);
 
 	.switchOutButtons-enter, .switchOutButtons-leave-to {
 		opacity: 0;
@@ -492,6 +498,7 @@
     .lower-controls button {
         transition: all 0.25s;
         display: inline-block;
+        cursor: pointer;
     }
 
     .lower-controls {
@@ -542,5 +549,12 @@
     .editorConfig button {
         float: right;
         margin-top: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .codeTitleInput { 
+        color: white;
+        border-color: #2b3a4f;
+      }
     }
 </style>

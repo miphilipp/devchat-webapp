@@ -65,7 +65,7 @@ import TextMessageBox from '@/components/MessageBox.vue'
 import EditorType from '../editor'
 import { Message, MessageType, makeMessage, CodeMessage } from '../message'
 import { RESTCommand, SocketMessage, SocketRestMethod } from '../socket'
-import { User, UserInConversation } from '../user'
+import { User, UserInConversation, colorIndexToColor } from '../user'
 import { getMessages } from '../message'
 import { Invitation } from '../invitations'
 import { Conversation } from '../conversation'
@@ -122,7 +122,7 @@ export default class Home extends Vue {
       (m: UserInConversation) => m.name === author
     )
     if (user === undefined) return '#000'
-    return user.color
+    return colorIndexToColor(user.colorIndex)
   }
 
   changeSelectedEditor(data: number) {
@@ -164,6 +164,7 @@ export default class Home extends Vue {
     try {
       const res = await this.$socket.request(socketMessage)
       this.$store.commit('setMessageReceptionConfirmed', {newId: res.payload.id, provisionaryId: res.payload.provisionaryId})
+      this.selectMessage(res.payload.id, message.type)
       this.scrollToBottom()
     } catch (error) {
       const text = Errors.sendMessage(error)
@@ -329,8 +330,8 @@ export default class Home extends Vue {
         content: '';
         z-index: 1000;
         opacity: 0;
-        -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
-        transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
+        -webkit-transition: opacity 0.3s, width 0.3s, height 0.3s;
+        transition: opacity 0.3s, width 0.3s, height 0.3s;
     }
 
     #outerWrapper.sidebarVisible {
@@ -384,6 +385,7 @@ export default class Home extends Vue {
     }
 
     #chatTitle { grid-area: chatTitle; }
+
     .chat { 
         border-top: 2px solid white;
         grid-area: chat;
@@ -404,5 +406,20 @@ export default class Home extends Vue {
       border-bottom-right-radius: 15px;
       border-bottom-left-radius: 15px;
       border-top: 2px solid white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #chatInput {
+        border-top: 2px solid #d6d6d6;
+      }
+
+      .mainWrapper::after {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      .chat {
+        border-top: 2px solid #d6d6d6;
+        background: linear-gradient(227deg, #71a4a5, #b1955b);
+      }
     }
 </style>

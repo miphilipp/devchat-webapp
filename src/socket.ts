@@ -67,9 +67,8 @@ class SocketConnection {
         }
 
         try {
-            let uri = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-            uri += '//' + window.location.host
-            uri += window.location.pathname + `websocket?token=${token}`
+            const schema = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+            const uri = `${schema}//${window.location.host}/websocket?token=${token}`
             this.socket = new WebSocket(uri)
         } catch (error) { }
 
@@ -171,7 +170,7 @@ class SocketConnection {
     public request(message: SocketMessage): Promise<any> {
         const promise = new Promise<any>((resolve, reject) => {
             if (this.socket === undefined) {
-                reject('Nicht verbunden')
+                reject({code: 2003, message: 'Not connected'})
                 return
             }
 
@@ -179,7 +178,7 @@ class SocketConnection {
                 this.socket.send(JSON.stringify(message))
                 const timer = setTimeout(() => {
                     this.openRequests.delete(message.id)
-                    reject('Zeitüberschreitung')
+                    reject({code: 2002, message: 'timeout'})
                 }, 3000)
                 this.openRequests.set(message.id, {
                     rejector: reject,
@@ -197,7 +196,6 @@ class SocketConnection {
     public emit(message: SocketMessage) {
         if (this.socket === undefined) return
         try {
-            console.log('Sendig data on websocket')
             this.openRequests.set(message.id, {discard: true})
             this.socket.send(JSON.stringify(message))
         } catch (error) {

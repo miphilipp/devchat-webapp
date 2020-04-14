@@ -117,4 +117,10 @@ export default UserSelection
         line-height: initial;
 		font-weight: initial;
     }
+
+    @media (prefers-color-scheme: dark) {
+        .wrapper {
+            background-color: #999;
+        }
+    }
 </style>

@@ -80,7 +80,6 @@ import 'prismjs/components/prism-graphql.js'
 
 
 import 'vue-prism-editor/dist/VuePrismEditor.css'
-import 'prismjs/themes/prism.css'
 import 'vue-select/dist/vue-select.css'
 
 Vue.use(SocketPlugin)
@@ -89,16 +88,16 @@ Vue.use(Logout)
 
 Vue.directive('click-outside', {
   bind(el, binding, vnode) {
-    (el as any).event = (event: Event) => {
+    (el as any).outside_event = (event: Event) => {
       const a = (el === event.target || el.contains(event.target as Element))
       if (!a && vnode.context !== undefined) {
         (vnode.context as {[a: string]: any})[binding.expression as string](event)
       }
     }
-    document.body.addEventListener('click', (el as any).event)
+    document.body.addEventListener('click', (el as any).outside_event)
   },
   unbind(el) {
-    document.body.removeEventListener('click', (el as any).event)
+    document.body.removeEventListener('click', (el as any).outside_event)
   },
 })
 

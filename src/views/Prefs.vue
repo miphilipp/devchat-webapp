@@ -53,7 +53,7 @@ import Circle2 from 'vue-loading-spinner/src/components/Circle2.vue'
 @Component({
   components: {
     Circle2,
-  }
+  },
 })
 export default class Preferences extends Vue {
 
@@ -87,9 +87,7 @@ export default class Preferences extends Vue {
       hasErrors = true
     }
 
-    if (hasErrors) {
-      return
-    }
+    if (hasErrors) return
 
     try {
       await changePassword(oldPassword, newPassword)
@@ -109,9 +107,7 @@ export default class Preferences extends Vue {
 
   async chooseImage() {
     const file = (document.getElementById('avatar-input') as HTMLInputElement).files!.item(0)
-    if (file === null) {
-      return
-    }
+    if (file === null) return
 
     const fd = new FormData();
     fd.append('avatar', file);
@@ -244,7 +240,7 @@ export default class Preferences extends Vue {
   }
 
   .wrapper > div {
-    width: 30%;
+    width: 450px;
     margin: 0 auto;
     margin-top: 60px;
   }
@@ -288,5 +284,25 @@ export default class Preferences extends Vue {
 
   .wrapper {
     background-color: var(--backgroundColor);
+  }
+
+  @media (prefers-color-scheme: dark) {
+
+    .wrapper {
+      background-color: var(--mainBackgroundColor);
+      color: white;
+    }
+
+    nav {
+      background-color: #1c222f;
+    }
+
+    .prefix {
+      color: rgb(184, 184, 184);
+    }
+
+    .password-settings span {
+      background-color: var(--mainBackgroundColor);
+    }
   }
 </style>
