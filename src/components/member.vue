@@ -118,8 +118,8 @@ export default MemberCell
         border-radius: 5px;
         display: flex;
         flex-direction: column;
-        right: -150px;
-        width: 135px;
+        right: -158px;
+        width: 140px;
         top: -17px;
     }
 
@@ -199,5 +199,21 @@ export default MemberCell
     .invitedLabel .text {
         transition: opacity 0.2s;
         opacity: 1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .member-actions {
+            background-color: rgb(40,40,40);
+        }
+
+        .member-actions button {
+            background-color: rgb(40,40,40);
+            color: white;
+        }
+
+        .member-actions button:hover {
+            background-color: rgb(73, 73, 73);
+            color: white;
+        }
     }
 </style>
