@@ -1,4 +1,4 @@
-import { MessageType } from '@/message'
+import { MessageType } from '@/model/message'
 
 export default interface EditorType {
     title: string

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { TextMessage } from "../message"
+import { TextMessage } from "../model/message"
 
 @Component
 class MessageBox extends Vue {

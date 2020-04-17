@@ -31,9 +31,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { UserInConversation, User, colorIndexToColor } from '../user'
-import { deleteMember, setAdminStatus } from '../conversation'
-import { Invitation, revokeInvitation } from '../invitations'
+import { UserInConversation, User, colorIndexToColor } from '../model/user'
+import { deleteMember, setAdminStatus } from '../model/conversation'
+import { Invitation, revokeInvitation } from '../model/invitations'
 import Errors from '../errors'
 
 @Component

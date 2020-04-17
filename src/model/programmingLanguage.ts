@@ -1,4 +1,4 @@
-import {fetchJson} from '@/auth'
+import {fetchJson} from '@/rest'
 
 class ProgrammingLanguage {
     public static async fetchAll(): Promise<ProgrammingLanguage[]> {

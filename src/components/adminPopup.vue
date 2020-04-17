@@ -27,10 +27,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { deleteConversation, deleteMember, patchConversation, leaveConversation } from '../conversation'
-import { Invitation, revokeInvitation, postInvitation } from '../invitations'
+import { deleteConversation, deleteMember, patchConversation, leaveConversation } from '../model/conversation'
+import { Invitation, revokeInvitation, postInvitation } from '../model/invitations'
 import { getMediaToken } from '../auth'
-import { User, UserInConversation } from '../user'
+import { User, UserInConversation } from '../model/user'
 import { RESTCommand, SocketRestMethod } from '../socket'
 import Errors from '../errors'
 import MemberCell from './member.vue';

@@ -1,4 +1,4 @@
-import { fetchJson } from '@/auth'
+import { fetchJson } from '@/rest'
 
 enum MessageType {
     Text,

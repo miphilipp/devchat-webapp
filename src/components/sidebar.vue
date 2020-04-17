@@ -44,10 +44,10 @@
 
 <script lang="ts">
     import InvitationCell from './invitation-cell.vue'
-    import { postConversation } from '../conversation'
-    import { User, getOtherUsers } from '../user'
+    import { postConversation } from '../model/conversation'
+    import { User, getOtherUsers } from '../model/user'
     import { RESTCommand, SocketRestMethod } from '../socket'
-    import { denieInvitation, acceptInvitation } from '../invitations'
+    import { denieInvitation, acceptInvitation } from '../model/invitations'
 
     import { Component, Prop, Vue } from 'vue-property-decorator'
 

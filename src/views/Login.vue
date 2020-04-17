@@ -210,7 +210,9 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { fetchJson, login, storageAvailable } from '../auth'
+import { fetchJson } from '../rest'
+import { storageAvailable } from '../storage'
+import { login } from '../auth'
 import Errors from '../errors'
 import { ClientError, ServerError } from '../errors';
 

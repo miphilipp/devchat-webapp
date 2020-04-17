@@ -3,7 +3,7 @@ import {
     SocketMessage,
     RESTCommand,
     SocketRestMethod,
-} from './socket'
+} from '../socket'
 import { MessageType } from './message'
 
 async function startCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {

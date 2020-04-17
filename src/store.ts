@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { fetchJson } from '@/auth'
-import { Message, MessageType, TextMessage, CodeMessage, MediaMessage } from '@/message'
+import { fetchJson } from '@/rest'
+import { Message, MessageType, TextMessage, CodeMessage, MediaMessage } from '@/model/message'
 import {
   Conversation,
   getInitialConverstaions,
   makeEmptyConversation,
   getCompleteConversation,
-} from '@/conversation'
-import { User, getUser, UserInConversation } from '@/user'
-import { Invitation, getAllInvitations } from '@/invitations'
+} from '@/model/conversation'
+import { User, getUser, UserInConversation } from '@/model/user'
+import { Invitation, getAllInvitations } from '@/model/invitations'
 
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 

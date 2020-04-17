@@ -150,7 +150,7 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import {fetchJson} from '../auth'
+import { fetchJson } from '../rest'
 import Errors from '../errors'
 
 @Component

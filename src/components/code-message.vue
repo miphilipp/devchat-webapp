@@ -17,8 +17,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { CodeMessage } from "../message"
-import ProgrammingLanguage from '../programmingLanguage'
+import { CodeMessage } from "../model/message"
+import ProgrammingLanguage from '../model/programmingLanguage'
 
 @Component
 class CodeMessageBox extends Vue {

@@ -30,8 +30,8 @@
 
 <script lang="ts">
     import { Component, Prop, Vue } from 'vue-property-decorator'
-    import { TextMessage, MediaMessage, MessageType, FileMedia } from '../message';
-    import { postData } from '../auth'
+    import { TextMessage, MediaMessage, MessageType, FileMedia } from '../model/message';
+    import { postData } from '../rest'
     import Errors from "../errors";
     let enterIsLocked = false
 

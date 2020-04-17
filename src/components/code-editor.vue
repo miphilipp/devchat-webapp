@@ -73,15 +73,15 @@
 </template>
 
 <script lang="ts">
-    import ProgrammingLanguage from '../programmingLanguage'
-    import { Message, CodeMessage, MessageType, reloadMessage } from '../message'
+    import ProgrammingLanguage from '../model/programmingLanguage'
+    import { Message, CodeMessage, MessageType, reloadMessage } from '../model/message'
     import { RESTCommand, SocketRestMethod, SocketMessage } from '../socket'
-    import { startCodingSession, sendLiveCodingUpdate, stopCodingSession } from '../coding'
+    import { startCodingSession, sendLiveCodingUpdate, stopCodingSession } from '../model/coding'
     import PrismEditor from 'vue-prism-editor'
     import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
     //import * as workerPath from "file-loader?name=[name].js!../diffWorker"
     import { DiffMatchPatch } from 'diff-match-patch-typescript'
-    import { Conversation } from '../conversation'
+    import { Conversation } from '../model/conversation'
     import TitleInput from './titleInput.vue'
     import Errors from '../errors'
 

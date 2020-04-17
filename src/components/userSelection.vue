@@ -24,8 +24,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { fetchJson } from '../auth'
-import { User, getOtherUsers } from '../user'
+import { fetchJson } from '../rest'
+import { User, getOtherUsers } from '../model/user'
 import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
 

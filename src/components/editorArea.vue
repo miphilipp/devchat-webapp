@@ -27,11 +27,11 @@
 <script lang="ts">
     import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
     import { RESTCommand, SocketRestMethod } from '../socket'
-    import { MessageType, Message, getMessagesOfType } from '../message'
+    import { MessageType, Message, getMessagesOfType } from '../model/message'
     import EditorType from '../editor'
 
     import CodeEditor from "./code-editor.vue"
-    import { Conversation } from '../conversation'
+    import { Conversation } from '../model/conversation'
 
     @Component({
         components: {

@@ -1,4 +1,4 @@
-import { getToken } from '@/auth'
+import { getToken } from '@/storage'
 import { faTextHeight } from '@fortawesome/free-solid-svg-icons'
 
 enum SocketRestMethod {

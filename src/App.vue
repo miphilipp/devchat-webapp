@@ -27,10 +27,10 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import UserSelection from '@/components/userSelection.vue'
-import { Invitation } from './invitations'
-import { Message, makeMessage } from './message'
-import { Conversation } from './conversation'
-import { getOtherUsers } from './user';
+import { Invitation } from './model/invitations'
+import { Message, makeMessage } from './model/message'
+import { Conversation } from './model/conversation'
+import { getOtherUsers } from './model/user';
 import { RESTCommand, SocketRestMethod } from './socket'
 import NotificationBanner from '@/components/NotificationBanner.vue'
 import Prompt from '@/components/prompt.vue'

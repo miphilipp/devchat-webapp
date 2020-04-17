@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import {Invitation} from '../invitations'
+import {Invitation} from '../model/invitations'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component

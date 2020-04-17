@@ -55,11 +55,11 @@
 <script lang="ts">
 	import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 	import { RESTCommand, SocketRestMethod } from '../socket'
-	import { Conversation } from '../conversation'
+	import { Conversation } from '../model/conversation'
 	import { logout, getMediaToken } from '../auth'
 	import EditorType from '../editor'
-	import { User } from '../user'
-	import { MessageType } from '../message'
+	import { User } from '../model/user'
+	import { MessageType } from '../model/message'
 	import AdminPopup from './adminPopup.vue'
 
 	@Component({

@@ -80,7 +80,7 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import {fetchJson} from '../auth'
+import { fetchJson } from '../rest'
 
 @Component
 export default class ConfirmAccount extends Vue {

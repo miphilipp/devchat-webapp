@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { MediaMessage } from "../message"
+import { MediaMessage } from "../model/message"
 import { getMediaToken } from '../auth'
 
 @Component

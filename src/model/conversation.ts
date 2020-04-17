@@ -1,6 +1,6 @@
-import {UserInConversation, User, getUsersOfConversation, makeInitialUser} from '@/user'
-import {Message, getMessages, getMessagesOfType, MessageType} from '@/message'
-import {fetchJson} from '@/auth'
+import {UserInConversation, User, getUsersOfConversation, makeInitialUser} from '@/model/user'
+import {Message, getMessages, getMessagesOfType, MessageType} from '@/model/message'
+import {fetchJson} from '@/rest'
 
 interface IConversation {
     title: string

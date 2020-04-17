@@ -45,8 +45,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { postData, login, logout, getMediaToken, fetchJson } from '../auth'
-import { changePassword, deleteAccount } from '../user'
+import { postData, fetchJson } from '../rest'
+import { login, logout, getMediaToken } from '../auth'
+import { changePassword, deleteAccount } from '../model/user'
 import Errors from '../errors'
 import Circle2 from 'vue-loading-spinner/src/components/Circle2.vue'
 
