@@ -51,15 +51,15 @@ async function getUsersOfConversation(conversationId: number): Promise<UserInCon
     }
 }
 
-async function changePassword(oldPassword: string, newPassword: string) {
-    await fetchJson(`/user/password`, {
+function changePassword(oldPassword: string, newPassword: string): Promise<any> {
+    return fetchJson(`/user/password`, {
         oldPassword,
         newPassword,
     }, 'PATCH')
 }
 
-async function deleteAccount() {
-    await fetchJson(`/user`, undefined, 'DELETE')
+function deleteAccount(): Promise<any> {
+    return fetchJson(`/user`, undefined, 'DELETE')
 }
 
 async function getOtherUsers(prefix: string): Promise<User[]> {

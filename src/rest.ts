@@ -1,6 +1,6 @@
 import {getToken} from '@/storage'
 
-async function authorizedRequest(
+function authorizedRequest(
     location: string,
     method: string,
     useApi: boolean,
@@ -16,7 +16,7 @@ async function authorizedRequest(
     }
 
     const path = useApi ? '/api/v1' + location : location
-    return await fetch(path, {
+    return fetch(path, {
         method,
         headers,
         body: data,
@@ -46,7 +46,7 @@ async function postData(location: string, data: any): Promise<any> {
     return await handleResponse(response)
 }
 
-async function fetchJson(location: string, data?: any, method: string = 'GET', useApi = true): Promise<any> {
+async function fetchJson(location: string, data?: any, method = 'GET', useApi = true): Promise<any> {
     const response = await authorizedRequest(location, method, useApi, JSON.stringify(data), 'application/json')
     return await handleResponse(response)
 }

@@ -6,23 +6,23 @@ interface Invitation {
     recipient: number
 }
 
-async function denieInvitation(id: number): Promise<any> {
-    return await fetchJson(`/invitation`, {
+function denieInvitation(id: number): Promise<any> {
+    return fetchJson(`/invitation`, {
         action: 'denie',
         conversationId: id,
    }, 'PATCH')
 }
 
-async function revokeInvitation(i: Invitation): Promise<any> {
-    return await fetchJson(`/invitation`, i, 'DELETE')
+function revokeInvitation(i: Invitation): Promise<any> {
+    return fetchJson(`/invitation`, i, 'DELETE')
 }
 
-async function postInvitation(i: Invitation): Promise<any> {
-    return await fetchJson(`/invitation`, i, 'POST')
+function postInvitation(i: Invitation): Promise<any> {
+    return fetchJson(`/invitation`, i, 'POST')
 }
 
-async function acceptInvitation(id: number): Promise<any> {
-    return await fetchJson(`/invitation`, {
+function acceptInvitation(id: number): Promise<any> {
+    return fetchJson(`/invitation`, {
         action: 'accept',
         conversationId: id,
    }, 'PATCH')

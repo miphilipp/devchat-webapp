@@ -76,7 +76,7 @@
 		avatarLink = ''
 		showDefaultAvatar = true
 
-		async clickLogout() {
+		clickLogout() {
 			this.$logout(false)
 		}
 

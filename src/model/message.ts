@@ -176,8 +176,8 @@ async function getMessages(conversationId: number, limit: number, before?: numbe
     return res.map((m: any) => makeMessage(m))
 }
 
-async function reloadMessage(messageId: number, conversationId: number): Promise<Message> {
-    return await fetchJson(`/conversation/${conversationId}/messages/${messageId}`)
+function reloadMessage(messageId: number, conversationId: number): Promise<Message> {
+    return fetchJson(`/conversation/${conversationId}/messages/${messageId}`)
 }
 
 

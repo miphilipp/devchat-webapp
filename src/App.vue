@@ -200,7 +200,7 @@ export default class App extends Vue {
     this.isUserSelectionVisible = false
   }
 
-  async showNotification(data: any) {
+  showNotification(data: any) {
     const text = data.text === undefined ? '' : data.text
     const heading = data.error === true ? 'Fehler' : data.heading
     this.isNotificationError = data.error !== undefined ? data.error : false
@@ -230,10 +230,10 @@ export default class App extends Vue {
     return this.$store.state.chat.loggedIn
   }
 
-  async initStore() {
+  initStore() {
     this.$store.commit('setConnected', true)
     this.$eventBus.$emit('show-notification', {heading: 'Verbindung hergestellt', dontShowNative: true})
-    await this.$store.dispatch('init')
+    this.$store.dispatch('init')
   }
 
   setup() {
@@ -265,7 +265,6 @@ export default class App extends Vue {
 
   syncLogout (event: StorageEvent) {
     if (event.key === 'user' && event.oldValue !== null) {
-      console.log(event.url)
       this.$logout(true)
     }
   }

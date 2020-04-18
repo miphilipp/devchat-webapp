@@ -6,7 +6,7 @@ import {
 } from '../socket'
 import { MessageType } from './message'
 
-async function startCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
+function startCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
     return socket.request(new SocketMessage(
         new RESTCommand('livesession/code/start', SocketRestMethod.Notify), source, {
             id: messageId,
@@ -15,7 +15,7 @@ async function startCodingSession(socket: SocketConnection, source: number, mess
     ))
 }
 
-async function stopCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
+function stopCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
     return socket.request(new SocketMessage(
         new RESTCommand('livesession/code/stop', SocketRestMethod.Notify), source, {
             id: messageId,
@@ -25,7 +25,7 @@ async function stopCodingSession(socket: SocketConnection, source: number, messa
 }
 
 
-async function sendLiveCodingUpdate(
+function sendLiveCodingUpdate(
     socket: SocketConnection,
     source: number,
     messageId: number,

@@ -25,8 +25,8 @@ class Conversation implements IConversation {
     }
 }
 
-async function patchConversation(conversationId: number, data: any) {
-    return await fetchJson(`/conversation/${conversationId}`, data , 'PATCH')
+function patchConversation(conversationId: number, data: any): Promise<any> {
+    return fetchJson(`/conversation/${conversationId}`, data , 'PATCH')
 }
 
 async function postConversation(
@@ -48,30 +48,30 @@ async function postConversation(
     return conversation
 }
 
-async function setAdminStatus(conversationId: number, memberId: number, state: boolean): Promise<any> {
-    return await fetchJson(`/conversation/${conversationId}/users/${memberId}`, {
+function setAdminStatus(conversationId: number, memberId: number, state: boolean): Promise<any> {
+    return fetchJson(`/conversation/${conversationId}/users/${memberId}`, {
         state,
     }, 'PATCH')
 }
 
-async function deleteMember(conversationId: number, memberId: number): Promise<any> {
-    return await fetchJson(`/conversation/${conversationId}/users/${memberId}`, undefined, 'DELETE')
+function deleteMember(conversationId: number, memberId: number): Promise<any> {
+    return fetchJson(`/conversation/${conversationId}/users/${memberId}`, undefined, 'DELETE')
 }
 
 function makeEmptyConversation(): Conversation {
     return new Conversation(-1, '', '')
 }
 
-async function leaveConversation(conversationId: number, ownId: number, adminSuccessorId = 0): Promise<any> {
+function leaveConversation(conversationId: number, ownId: number, adminSuccessorId = 0): Promise<any> {
     let path = `/conversation/${conversationId}/users/${ownId}`
     if (adminSuccessorId !== 0) {
         path = `/conversation/${conversationId}/users/${ownId}?newadmin=${adminSuccessorId}`
     }
-    return await fetchJson(path, undefined, 'DELETE')
+    return fetchJson(path, undefined, 'DELETE')
 }
 
-async function deleteConversation(id: number): Promise<any> {
-    return await fetchJson(`/conversation/${id}`, undefined, 'DELETE')
+function deleteConversation(id: number): Promise<any> {
+    return fetchJson(`/conversation/${id}`, undefined, 'DELETE')
 }
 
 async function getCompleteConversation(id: number, title: string, nUnreadMessages: number): Promise<Conversation> {

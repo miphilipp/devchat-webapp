@@ -98,7 +98,7 @@ export default class Home extends Vue {
     },
   ]
 
-  async created() {    
+  created() {    
     this.$socket.subscribe(new RESTCommand('message', SocketRestMethod.Post), this.appendReceivedMessage)
   }
 
