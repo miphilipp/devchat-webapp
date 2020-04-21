@@ -54,7 +54,7 @@
     @Component({
         components: {
             InvitationCell,
-        }
+        },
     })
     class Sidebar extends Vue { 
         isCreationFormVisible = false
@@ -146,9 +146,9 @@
                 el.classList.remove('error')
             }
         }
-        
+
         select(conversationId: number, shellHide: boolean) {
-            this.$emit('select', {conversation: conversationId, shellHide: shellHide})
+            this.$emit('select', {conversation: conversationId, shellHide})
         }
 
         closeSidebar() {

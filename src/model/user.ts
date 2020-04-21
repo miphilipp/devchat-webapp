@@ -15,7 +15,7 @@ interface UserInConversation extends User {
 }
 
 async function getUser(): Promise<User> {
-    const res = await fetchJson(`/user`)
+    const res = await fetchJson('/user')
     return {id: res.id, name: res.name, email: res.email}
 }
 
@@ -52,14 +52,14 @@ async function getUsersOfConversation(conversationId: number): Promise<UserInCon
 }
 
 function changePassword(oldPassword: string, newPassword: string): Promise<any> {
-    return fetchJson(`/user/password`, {
+    return fetchJson('/user/password', {
         oldPassword,
         newPassword,
     }, 'PATCH')
 }
 
 function deleteAccount(): Promise<any> {
-    return fetchJson(`/user`, undefined, 'DELETE')
+    return fetchJson('/user', undefined, 'DELETE')
 }
 
 async function getOtherUsers(prefix: string): Promise<User[]> {

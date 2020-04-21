@@ -363,7 +363,7 @@ class ChatModule extends VuexModule {
   get messagesOfType(): (type: MessageType) => Message[] {
     const currentIndex = this.selectedConversationIndex
     const conversation = this.conversations[this.selectedConversationIndex]
-    return function (type: MessageType): Message[] {
+    return function(type: MessageType): Message[] {
       if (currentIndex === -1) return []
       return conversation.messages.filter((m: Message) => m.type === type)
     }

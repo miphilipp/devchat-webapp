@@ -79,7 +79,7 @@ import Errors from '../errors'
     ChatInput,
     Sidebar,
     Editor,
-  }
+  },
 })
 export default class Home extends Vue {
   showSidebar = false
@@ -90,15 +90,15 @@ export default class Home extends Vue {
   allMessagesLoaded = false
   editors: EditorType[] = [
     {
-      title: 'Code', 
-      component: 'codeEditor', 
-      messageType: MessageType.Code, 
+      title: 'Code',
+      component: 'codeEditor',
+      messageType: MessageType.Code,
       listTitle: 'Code - Nachrichten',
       meta: { live: this.hasCodingSession },
     },
   ]
 
-  created() {    
+  created() {
     this.$socket.subscribe(new RESTCommand('message', SocketRestMethod.Post), this.appendReceivedMessage)
   }
 
@@ -254,7 +254,6 @@ export default class Home extends Vue {
         } catch (error) {
           container.scrollTop = ul.clientHeight - previousHeight
         }
-        
       } else {
         this.allMessagesLoaded = true
       }

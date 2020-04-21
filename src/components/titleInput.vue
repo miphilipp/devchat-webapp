@@ -20,7 +20,7 @@ class TitleInput extends Vue {
 
 
     updateSelf(value: string) {
-      this.$emit("input", value);
+      this.$emit('input', value)
     }
 }
 

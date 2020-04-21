@@ -87,12 +87,12 @@ export default class ConfirmAccount extends Vue {
 
     error = false
     text = ''
-    
+
     async created() {
         const token = this.$route.query.token
         if (token === undefined || token === '') {
             this.error = true
-            this.text = "Dieser Link ist ungültig."
+            this.text = 'Dieser Link ist ungültig.'
             return
         }
 

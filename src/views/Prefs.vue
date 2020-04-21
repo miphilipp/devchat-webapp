@@ -110,8 +110,8 @@ export default class Preferences extends Vue {
     const file = (document.getElementById('avatar-input') as HTMLInputElement).files!.item(0)
     if (file === null) return
 
-    const fd = new FormData();
-    fd.append('avatar', file);
+    const fd = new FormData()
+    fd.append('avatar', file)
 
     try {
       this.avatarLoading = true

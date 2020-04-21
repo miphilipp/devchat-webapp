@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { MediaMessage } from "../model/message"
+import { MediaMessage } from '../model/message'
 import { getMediaToken } from '../auth'
 
 @Component
@@ -31,7 +31,7 @@ class RessourceMessageBox extends Vue {
     }
 
     get timestamp() {
-        return this.msg.sentDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        return this.msg.sentDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
     }
     get isOwn() {
         return this.$store.getters.username === this.msg.author

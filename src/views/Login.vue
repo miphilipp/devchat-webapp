@@ -214,7 +214,7 @@ import { fetchJson } from '../rest'
 import { storageAvailable } from '../storage'
 import { login } from '../auth'
 import Errors from '../errors'
-import { ClientError, ServerError } from '../errors';
+import { ClientError, ServerError } from '../errors'
 
 enum FormMode {
     SignIn = 0,
