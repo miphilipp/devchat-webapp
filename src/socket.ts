@@ -179,7 +179,7 @@ class SocketConnection {
                 const timer = setTimeout(() => {
                     this.openRequests.delete(message.id)
                     reject({code: 2002, message: 'timeout'})
-                }, 3000)
+                }, 5000)
                 this.openRequests.set(message.id, {
                     rejector: reject,
                     resolver: resolve,
