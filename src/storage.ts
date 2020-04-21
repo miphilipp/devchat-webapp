@@ -1,9 +1,5 @@
-function getToken(): string | undefined {
-    const userData = localStorage.getItem('user')
-    if (userData !== null) {
-        return JSON.parse(userData).token
-    }
-    return undefined
+function getLoggedInUser(): string | null {
+    return localStorage.getItem('user')
 }
 
 function storageAvailable(): boolean {
@@ -32,6 +28,6 @@ function storageAvailable(): boolean {
 }
 
 export {
-    getToken,
+    getLoggedInUser,
     storageAvailable,
 }

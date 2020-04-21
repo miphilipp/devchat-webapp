@@ -31,13 +31,7 @@ async function login(username: string, password: string): Promise<boolean> {
         throw {code: response.status, statusText: response.statusText}
     }
 
-    const authHeader = response.headers.get('Authorization')
-    if (authHeader === null) {
-        return false
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    localStorage.setItem('user', JSON.stringify({user: username, token}))
+    localStorage.setItem('user', username)
 
     const body = await response.json()
     if (body.success === true) {

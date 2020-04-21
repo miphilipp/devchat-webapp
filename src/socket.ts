@@ -1,4 +1,4 @@
-import { getToken } from '@/storage'
+import { getLoggedInUser } from '@/storage'
 import { faTextHeight } from '@fortawesome/free-solid-svg-icons'
 
 enum SocketRestMethod {
@@ -61,14 +61,14 @@ class SocketConnection {
             return
         }
 
-        const token = getToken()
-        if (token === undefined) {
+        const token = getLoggedInUser()
+        if (token === null) {
             throw Error('logged out')
         }
 
         try {
             const schema = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-            const uri = `${schema}//${window.location.host}/websocket?token=${token}`
+            const uri = `${schema}//${window.location.host}/api/v1/websocket`
             this.socket = new WebSocket(uri)
         } catch (error) { }
 

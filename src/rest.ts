@@ -1,16 +1,10 @@
-import {getToken} from '@/storage'
-
-function authorizedRequest(
+function request(
     location: string,
     method: string,
     useApi: boolean,
     data?: any,
     contentType?: string): Promise<Response> {
     const headers = new Headers()
-    const token = getToken()
-    if (token !== undefined) {
-        headers.append('Authorization', 'Bearer ' + token)
-    }
     if (contentType !== undefined) {
         headers.append('Content-Type', contentType)
     }
@@ -42,12 +36,12 @@ async function handleResponse(response: Response): Promise<any> {
 }
 
 async function postData(location: string, data: any): Promise<any> {
-    const response = await authorizedRequest(location, 'POST', true, data)
+    const response = await request(location, 'POST', true, data)
     return await handleResponse(response)
 }
 
 async function fetchJson(location: string, data?: any, method = 'GET', useApi = true): Promise<any> {
-    const response = await authorizedRequest(location, method, useApi, JSON.stringify(data), 'application/json')
+    const response = await request(location, method, useApi, JSON.stringify(data), 'application/json')
     return await handleResponse(response)
 }
 
