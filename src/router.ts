@@ -6,6 +6,7 @@ import Login from './views/Login.vue'
 import Recovery from './views/Recovery.vue'
 import Confirm from './views/confirmAccount.vue'
 import store from './store'
+import { getLoggedInUser } from './storage'
 
 Vue.use(Router)
 
@@ -60,7 +61,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = getLoggedInUser()
 
   document.title = to.meta.title || 'DevChat'
 
@@ -76,7 +77,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = getLoggedInUser()
   if (loggedIn && !restrictedPages.includes(from.path)) {
     store.commit('setLoggedIn', true)
   }
