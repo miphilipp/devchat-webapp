@@ -371,7 +371,7 @@ export default class Login extends Vue {
                 email,
             }, 'POST', false)
             this.mode = FormMode.SignIn
-            this.showMessageBox('Registrierung erfolgreich', true)
+            this.showMessageBox('Registrierung erfolgreich', false, 3000)
         } catch (error) {
             const errorText = Errors.login(error)
             this.showMessageBox(errorText, true, 10000)
