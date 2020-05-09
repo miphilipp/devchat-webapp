@@ -11,6 +11,8 @@ enum SocketRestMethod {
     Heartbeat = 7,
 }
 
+type SocketEventHandler = (n: any, m: number) => void
+
 class RESTCommand {
     public ressource: string
     public method: SocketRestMethod
@@ -53,7 +55,7 @@ class SocketConnection {
     private socket?: WebSocket
     private reconnectTimer = -1
     private heartbeatTimer = -1
-    private handlers: Map<string, Array<((n: any, m: number) => void)>> = new Map()
+    private handlers: Map<string, SocketEventHandler[]> = new Map()
     private openRequests: Map<number, any> = new Map()
 
     public connect() {
@@ -70,14 +72,15 @@ class SocketConnection {
             const schema = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
             const uri = `${schema}//${window.location.host}/api/v1/websocket`
             this.socket = new WebSocket(uri)
-        } catch (error) { }
+        } catch (error) {
+            return
+        }
 
         if (this.socket === undefined) {
             return
         }
 
         this.socket.onopen = (event: Event) => {
-            console.log('Open successful')
             this.reconnectTimeout = reconnectTimeoutStartVal
             if (this.connectHandler !== undefined) {
                 this.connectHandler()
@@ -144,13 +147,13 @@ class SocketConnection {
 
     public disconnect() {
         if (this.socket !== undefined) {
-            this.socket.onclose = () => {}
+            this.socket.onclose = null
             this.socket.close(1000)
             this.socket = undefined
         }
     }
 
-    public subscribe(event: RESTCommand, handler: (n: any, m: number) => void, id: number = -1) {
+    public subscribe(event: RESTCommand, handler: SocketEventHandler, id: number = -1) {
         const handlers = this.handlers.get(event.toKey())
         if (handlers === undefined) {
             this.handlers.set(event.toKey(), [])
@@ -158,13 +161,15 @@ class SocketConnection {
 
         const newHandlers = this.handlers.get(event.toKey())
         if (newHandlers !== undefined) {
-            newHandlers!.push(handler)
+            newHandlers.push(handler)
             this.handlers.set(event.toKey(), newHandlers)
         }
     }
 
-    public unsubscribe() {
-
+    public unsubscribe(event: RESTCommand, handler: SocketEventHandler) {
+        const handlers = this.handlers.get(event.toKey())
+        if (handlers === undefined) return
+        this.handlers.set(event.toKey(), handlers.filter((h: SocketEventHandler) => h !== handler))
     }
 
     public request(message: SocketMessage): Promise<any> {

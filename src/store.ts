@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { fetchJson } from '@/rest'
 import { Message, MessageType, TextMessage, CodeMessage, MediaMessage } from '@/model/message'
 import {
   Conversation,
@@ -8,7 +7,7 @@ import {
   makeEmptyConversation,
   getCompleteConversation,
 } from '@/model/conversation'
-import { User, getUser, UserInConversation } from '@/model/user'
+import { User, getUser, UserInConversation, makeInitialUser } from '@/model/user'
 import { Invitation, getAllInvitations } from '@/model/invitations'
 
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
@@ -104,18 +103,27 @@ class ChatModule extends VuexModule {
   private mutateMessage(data: any) {
     const conversation = this.conversations.find((c: Conversation) => c.id === data.conversationId)
     if (conversation === undefined) return
-    const message = conversation.messages.find((c: Message) => c.id === data.messageId)
+    const message = conversation.messages.find((m: Message) => m.id === data.message.id )
     if (message === undefined) return
+
     switch (message.type) {
     case MessageType.Text:
       const textMessage = message as TextMessage
-      textMessage.text = data.text
+      textMessage.text = data.message.text
       break
     case MessageType.Code:
       const codeMessage = message as CodeMessage
-      codeMessage.title = data.title
-      codeMessage.language = data.language
-      codeMessage.code = data.code
+      codeMessage.title = data.message.title
+      codeMessage.language = data.message.language
+      codeMessage.code = data.message.code
+      break
+    case MessageType.Media:
+      const mediaMessage = message as MediaMessage
+      mediaMessage.text = data.message.text
+      mediaMessage.files = data.message.files
+      mediaMessage.canBeLoaded = data.message.canBeLoaded
+      mediaMessage.failedToSend = data.message.failedToSend
+      break
     default:
       break
     }
@@ -190,15 +198,7 @@ class ChatModule extends VuexModule {
       member.hasLeft = false
       member.hasJoined = false
     } else {
-      conversation.members.push({
-        id: data.userId,
-        name: data.username,
-        isAdmin: false,
-        hasJoined: false,
-        colorIndex: 0,
-        hasLeft: false,
-        isDeleted: false,
-      })
+      conversation.members.push(makeInitialUser({id: data.userId, name: data.username}, false, false))
     }
   }
 
@@ -253,32 +253,24 @@ class ChatModule extends VuexModule {
 
   @Action
   private async init() {
-    try {
-      const self = await getUser()
-      this.context.commit('setSelf', self)
+    const self = await getUser()
+    this.context.commit('setSelf', self)
 
-      const invitations = await getAllInvitations()
-      this.context.commit('setInvitations', invitations)
+    const invitations = await getAllInvitations()
+    this.context.commit('setInvitations', invitations)
 
-      const conversations = await getInitialConverstaions()
-      this.context.commit('setConversations', conversations)
+    const conversations = await getInitialConverstaions()
+    this.context.commit('setConversations', conversations)
 
-      if (conversations.length > 0) {
-
-        const selectedConversationIdStr = window.localStorage.getItem('lastSelectedConversationId')
-        const selectedConversationId = Number.parseInt(selectedConversationIdStr || '0', 10)
-        let selectedConversationIndex = conversations.findIndex((c: Conversation) => c.id === selectedConversationId)
-        if (selectedConversationIndex === -1) {
-          selectedConversationIndex = 0
-        }
-
-        this.context.commit('setSelectedConversation', conversations[selectedConversationIndex].id)
-
-        return true
+    if (conversations.length > 0) {
+      const selectedConversationIdStr = window.localStorage.getItem('lastSelectedConversationId')
+      const selectedConversationId = Number.parseInt(selectedConversationIdStr || '0', 10)
+      let selectedConversationIndex = conversations.findIndex((c: Conversation) => c.id === selectedConversationId)
+      if (selectedConversationIndex === -1) {
+        selectedConversationIndex = 0
       }
-      return false
-    } catch (error) {
-      console.error(error)
+
+      this.context.commit('setSelectedConversation', conversations[selectedConversationIndex].id)
     }
   }
 
@@ -291,16 +283,12 @@ class ChatModule extends VuexModule {
     const invitationIndex = this.invitations.findIndex((i: Invitation) =>  i.conversationId === id )
     this.invitations.splice(invitationIndex, 1)
 
-    try {
-      if (invitation.conversationTitle === undefined) {
-        throw Error('Format error')
-      }
-      const conversation = await getCompleteConversation(invitation.conversationId, invitation.conversationTitle, 0)
-      this.context.commit('addConversation', conversation)
-      this.context.commit('setSelectedConversation', conversation.id)
-    } catch (error) {
-      console.log(error)
+    if (invitation.conversationTitle === undefined) {
+      throw Error('Format error')
     }
+    const conversation = await getCompleteConversation(invitation.conversationId, invitation.conversationTitle, 0)
+    this.context.commit('addConversation', conversation)
+    this.context.commit('setSelectedConversation', conversation.id)
   }
 
   @Action

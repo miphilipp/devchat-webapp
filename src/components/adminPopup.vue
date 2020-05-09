@@ -29,7 +29,6 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { deleteConversation, deleteMember, patchConversation, leaveConversation } from '../model/conversation'
 import { Invitation, revokeInvitation, postInvitation } from '../model/invitations'
-import { getMediaToken } from '../auth'
 import { User, UserInConversation } from '../model/user'
 import { RESTCommand, SocketRestMethod } from '../socket'
 import Errors from '../errors'
@@ -56,9 +55,7 @@ class AdminPopup extends Vue {
         this.repoURL = this.$store.getters.selectedConversation.repoURL
         this.$eventBus.$on('hide-user-selection', this.hideUserSelection)
         this.$eventBus.$on('hide-prompt', this.confirm)
-
-        const token = await getMediaToken()
-        this.avatarLink = `/media/user/##user##/avatar?token=${token}`
+        this.avatarLink = `/media/user/##user##/avatar`
     }
 
     async hideUserSelection(users: User[]) {
@@ -84,7 +81,7 @@ class AdminPopup extends Vue {
                 })
             }
         } catch (error) {
-            const text = Errors.createConversation(error)
+            const text = Errors.sendInvitation(error)
             this.$eventBus.$emit('show-notification', {error: true, text})
         }
     }

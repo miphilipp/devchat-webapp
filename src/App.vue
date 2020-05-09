@@ -119,13 +119,17 @@ export default class App extends Vue {
   }
 
   appendReceivedMessage(payload: any, source: number) {
-    if (source === this.$store.getters.selectedConversation.id) {
-      //console.log('Received message in current conversation', payload)
-      this.$store.commit('appendMessage', {message: makeMessage(payload), conversationId: source})
-    } else {
-      const conversation: Conversation = this.$store.state.chat.conversations.find((c: Conversation) => c.id === source)
+    const message = makeMessage(payload)
+    const conversation: Conversation = this.$store.state.chat.conversations.find((c: Conversation) => c.id === source)
+    const i = conversation.messages.findIndex((m: Message) => m.id === message.id)
+    if (i !== -1) { 
+      this.$store.commit('mutateMessage', {conversationId: conversation.id, message})
+      return
+    }
+
+    this.$store.commit('appendMessage', {message, conversationId: source})
+    if (source !== this.$store.getters.selectedConversation.id) {
       this.$eventBus.$emit('show-notification', {heading: 'Neue Nachricht', text: 'In ' + conversation.title})
-      this.$store.commit('appendMessage', {message: makeMessage(payload), conversationId: source})
       this.$store.commit('incrementUnread', source)
     }
   }
@@ -171,17 +175,15 @@ export default class App extends Vue {
   removeInvitation(payload: Invitation, source: number) {
     if (payload.recipient === this.$store.state.chat.self.id) {
       this.$store.commit('removeInvitation', payload.conversationId)
-      return
     } else {
       this.$store.commit('removeMember', {recipient: payload.recipient, conversationId: payload.conversationId})
     }
   }
 
   clickModalOverlay(e: Event) {
-    if (e.target !== document.querySelector('.modalOverlay')) {
-      return;
+    if (e.target === document.querySelector('.modalOverlay')) {
+      this.hideUserSelection()
     }
-    this.hideUserSelection()
   }
 
   showPrompt(text: string) {
@@ -276,6 +278,14 @@ export default class App extends Vue {
     min-height: 100vh;
     height: 100%;
     --mainBackgroundColor: #fffef3;
+  }
+
+  .defaultToken {
+    padding: 4px 8px;
+    border-radius: 0.75mm;
+    background: linear-gradient(80deg, #38b4fd, #23e1ff);
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    color: white;
   }
 
   .defaultButton {

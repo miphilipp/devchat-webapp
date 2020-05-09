@@ -1,13 +1,13 @@
 import {fetchJson} from '@/rest'
 
 class ProgrammingLanguage {
-    public static async fetchAll(): Promise<ProgrammingLanguage[]> {
+    public static async fetchAll(): Promise<readonly ProgrammingLanguage[]> {
         const res = await fetchJson('/programmingLanguages')
         const languages: ProgrammingLanguage[] = []
         for (const l of res) {
             languages.push(new ProgrammingLanguage(l.name, l.isRunnable))
         }
-        return languages
+        return Object.freeze(languages)
     }
 
     public name: string

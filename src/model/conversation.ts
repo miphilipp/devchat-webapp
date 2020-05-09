@@ -16,6 +16,7 @@ class Conversation implements IConversation {
     public numberOfUnreadMessages: number
     public members: UserInConversation[] = []
     public messages: Message[] = []
+    public scrollPosition = 0
 
     constructor(id: number, title: string, repo: string, nUnreadMessages = 0) {
         this.id = id
@@ -40,7 +41,7 @@ async function postConversation(
         repoUrl: repo,
         initialMembers: initialMembers.map((u: User) => u.id),
     }, 'POST')
-    console.log('Neue Konversation', res)
+
     const members = initialMembers.map((u: User) => makeInitialUser(u, false, false))
     members.push(makeInitialUser(self, true, true))
     const conversation = new Conversation(res.id, title, '')

@@ -26,6 +26,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { fetchJson } from '../rest'
 import { User, getOtherUsers } from '../model/user'
+import { Throttle, Bind } from 'lodash-decorators'
 import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
 
@@ -38,31 +39,16 @@ class UserSelection extends Vue {
     selectedUser?: User
     savedUsers: User[] = []
     options: User[] = []
-    fetchTimeout = -1
 
     selectionMade(user: User) {
         this.savedUsers.push(user)
         this.selectedUser = undefined
     }
 
-    onSearch(search: string, loading: any) {
-        if (this.fetchTimeout !== -1) {
-            window.clearTimeout(this.fetchTimeout)
-        }
-
+    @Throttle(750, {leading: true})
+    @Bind()
+    async onSearch(search: string, loading: any) {
         if (search.length < 2) return
-        this.fetchTimeout = window.setTimeout(this.fetchUserResults.bind(this, search, loading), 750)
-    }
-
-    cancel() {
-        this.$eventBus.$emit('hide-user-selection')
-    }
-
-    confirm() {
-        this.$eventBus.$emit('hide-user-selection', this.savedUsers)
-    }
-
-    async fetchUserResults(search: string, loading: any) {
         try {
             const promise = getOtherUsers(search)
             loading(true)
@@ -75,6 +61,14 @@ class UserSelection extends Vue {
         } finally {
             loading(false)
         }
+    }
+
+    cancel() {
+        this.$eventBus.$emit('hide-user-selection')
+    }
+
+    confirm() {
+        this.$eventBus.$emit('hide-user-selection', this.savedUsers)
     }
 }
 

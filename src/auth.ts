@@ -1,44 +1,8 @@
 import { fetchJson } from '@/rest'
-import { storageAvailable } from '@/storage'
 
-class MediaToken {
-    public expiration: number
-    public token: string
-
-    constructor(token: string, expirationDateUnix: number) {
-        this.token = token
-        this.expiration = expirationDateUnix
-    }
-}
-
-async function login(username: string, password: string): Promise<boolean> {
-    const response = await fetch(`/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username,
-            password,
-        }),
-    })
-
-    if (!response.ok) {
-        const contentTypeField = response.headers.get('Content-Type')
-        if (contentTypeField === 'application/json') {
-            throw {code: response.status, statusText: response.statusText, info: await response.json()}
-        }
-        throw {code: response.status, statusText: response.statusText}
-    }
-
+async function login(username: string, password: string) {
+    await fetchJson('/login', { username, password }, 'POST', false)
     localStorage.setItem('user', username)
-
-    const body = await response.json()
-    if (body.success === true) {
-        return true
-    } else {
-        return false
-    }
 }
 
 async function logout(oneSided: boolean) {
@@ -50,37 +14,7 @@ async function logout(oneSided: boolean) {
         console.error(error)
     } finally {
         window.localStorage.removeItem('user')
-        window.localStorage.removeItem('media')
     }
-}
-
-async function getMediaToken(): Promise<string> {
-    if (!storageAvailable()) {
-        throw Error('Storage not supported')
-    }
-
-    let mediaToken
-    const storageKey = 'media'
-    const tokenData = localStorage.getItem(storageKey)
-    if (tokenData === null) {
-        mediaToken = await fetchMediaToken()
-        localStorage.setItem(storageKey, JSON.stringify(mediaToken))
-    } else {
-        const mediaTokenJSON = JSON.parse(tokenData)
-        mediaToken = new MediaToken(mediaTokenJSON.token, mediaTokenJSON.expiration)
-    }
-
-    const now = new Date()
-    if (new Date(mediaToken.expiration) <= now) {
-        mediaToken = await fetchMediaToken()
-        localStorage.setItem(storageKey, JSON.stringify(mediaToken))
-    }
-    return mediaToken.token
-}
-
-async function fetchMediaToken(): Promise<MediaToken> {
-    const res = await fetchJson('/mediatoken')
-    return new MediaToken(res.token, res.expiration)
 }
 
 function getUserName(): string | undefined {
@@ -95,5 +29,4 @@ export {
     login,
     logout,
     getUserName,
-    getMediaToken,
 }

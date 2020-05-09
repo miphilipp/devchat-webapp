@@ -22,11 +22,11 @@
         <table>
           <tr>
             <td><span class="prefix">Benutzername - </span></td>
-            <td><h3>{{ username }}</h3></td>
+            <td><h3>{{ user.name }}</h3></td>
           </tr>
           <tr>
             <td><span class="prefix">E-Mail - </span></td>
-            <td><h3>{{ emailAddress }}</h3></td>
+            <td><h3>{{ user.email }}</h3></td>
           </tr>
         </table>
       </div>
@@ -44,10 +44,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { postData, fetchJson } from '../rest'
-import { login, logout, getMediaToken } from '../auth'
-import { changePassword, deleteAccount } from '../model/user'
+import { changePassword, deleteAccount, User } from '../model/user'
 import Errors from '../errors'
 import Circle2 from 'vue-loading-spinner/src/components/Circle2.vue'
 
@@ -62,9 +61,11 @@ export default class Preferences extends Vue {
   avatarLink = ''
   avatarLoading = false
 
-  async created() {
+  created() {
     this.$eventBus.$on('hide-prompt', this.confirmDelete)
-		this.avatarLink = await this.generateAvatarLink()
+    if (this.user.id !== -1) {
+      this.avatarLink = this.generateAvatarLink(this.user.id)
+    }
   }
 
   closeSettings() {
@@ -101,9 +102,13 @@ export default class Preferences extends Vue {
     }
   }
 
-  async generateAvatarLink(): Promise<string> {
-    const token = await getMediaToken()
-    return `/media/user/${this.$store.state.chat.self.id}/avatar?token=${token}`
+  generateAvatarLink(id: number, force = false): string {
+    return force ? `/media/user/${id}/avatar?${Date.now()}` : `/media/user/${id}/avatar`
+  }
+
+  @Watch('user')
+  onUserChange(newVal: User, oldVal: User) {
+    this.avatarLink = this.generateAvatarLink(newVal.id)
   }
 
   async chooseImage() {
@@ -116,7 +121,7 @@ export default class Preferences extends Vue {
     try {
       this.avatarLoading = true
       await postData('/user/avatar', fd)
-      this.avatarLink = await this.generateAvatarLink()
+      this.avatarLink = this.generateAvatarLink(this.user.id, true)
     } catch (error) {
       const text = Errors.changeAvatar(error)
       this.$eventBus.$emit('show-notification', {error: true, text})
@@ -128,7 +133,7 @@ export default class Preferences extends Vue {
   async deleteAvatar() {
     try {
       await fetchJson('/user/avatar', undefined, 'DELETE')
-      this.avatarLink = await this.generateAvatarLink()
+      this.avatarLink = this.generateAvatarLink(this.user.id, true)
     } catch (error) {
       const text = Errors.deleteAvatar(error)
       this.$eventBus.$emit('show-notification', {error: true, text})
@@ -163,13 +168,9 @@ export default class Preferences extends Vue {
     }
   }
 
-  get username(): string {
-    return this.$store.state.chat.self.name
-  }
-
-  get emailAddress(): string {
-    return this.$store.state.chat.self.email
-  }
+  get user(): User {
+		return this.$store.state.chat.self
+	}
 }
 </script>
 

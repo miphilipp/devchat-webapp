@@ -24,6 +24,7 @@ import {
   faPlus,
   faCode,
   faSync,
+  faExclamation,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -31,6 +32,7 @@ import {
   faSave,
 } from '@fortawesome/free-regular-svg-icons'
 
+library.add(faExclamation)
 library.add(faSync)
 library.add(faTimes)
 library.add(faBars)

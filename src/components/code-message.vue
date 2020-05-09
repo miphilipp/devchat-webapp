@@ -8,7 +8,6 @@
                 <div class="languageIndicator">
                     {{ getlanguageExt(msg.language) }}
                 </div>
-                <!-- <p id="messageText">{{ msg.text }}</p> -->
             </div>
         </div>
     </div> 
@@ -53,7 +52,7 @@ class CodeMessageBox extends Vue {
             case "YAML":        return ".yaml"
             case "GraphQL":     return ".ql"
             case "F#":          return ".fs"
-            case "C#":          return ".cs"
+            case "C# (.Net Core)": return ".cs"
             case "Objective-C": return ".m/h"
             case "SQL":         return ".sql"
             case "MatLab":      return ".m"
@@ -160,16 +159,6 @@ export default CodeMessageBox
 
     .left .MessageContainer {
         margin-right: 50px;
-    }
-   
-    .OuterBox::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 5px;
-        display: block;
-        background-color: var(--indicatorColor);
     }
 
     @media (prefers-color-scheme: dark) {

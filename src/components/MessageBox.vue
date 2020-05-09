@@ -109,16 +109,6 @@ export default MessageBox
     .left .MessageContainer {
         margin-right: 50px;
     }
-   
-    .OuterBox::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 5px;
-        display: block;
-        background-color: var(--indicatorColor);
-    }
 
     @media (prefers-color-scheme: dark) {
       .meta { 

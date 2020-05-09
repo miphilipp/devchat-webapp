@@ -2,15 +2,17 @@
     <div class="chatInputOuterWrapper">
         <div id="toolbar">
             <!-- <font-awesome-icon class="styleButton" icon="bold" @click="applyStyle('bold')"></font-awesome-icon>
-            <font-awesome-icon class="styleButton" icon="italic" @click="applyStyle('italic')"></font-awesome-icon>
-            <font-awesome-icon class="styleButton" icon="underline" @click="applyStyle('underline')"></font-awesome-icon> -->
+            <font-awesome-icon class="styleButton" icon="italic" @click="applyStyle('italic')"></font-awesome-icon>-->
             <font-awesome-icon class="styleButton" icon="paperclip" @click="clickAttachFiles"></font-awesome-icon>
-            <span v-if="file !== null">{{file.name}}</span>
+            <div v-if="file !== null" class="defaultToken" >
+                <span class="fileNameLabel">{{ file.name }}</span>
+                <span @click="removeFile">x</span>
+            </div>
             <input 
-                id="file-input" 
+                :disabled="file !== null"
+                ref="fileInput"
                 @change="addFile" 
                 type="file" 
-                accept="image/jpg,image/png" 
                 name="name" 
                 style="display: none;" />
         </div>
@@ -19,7 +21,9 @@
                 :disabled="!isEnabled" 
                 name="massageText" 
                 id="textInput" 
+                v-model="text"
                 placeholder="Hier tippen zum Schreiben"
+                @input="typing"
                 @keydown.exact.prevent.enter="sendMessage" 
                 @keydown.prevent.shift.enter="appendNewLine"
                 cols="30" 
@@ -30,34 +34,84 @@
 
 <script lang="ts">
     import { Component, Prop, Vue } from 'vue-property-decorator'
-    import { TextMessage, MediaMessage, MessageType, FileMedia } from '../model/message';
-    import { postData } from '../rest'
-    import Errors from "../errors";
+    import {
+        TextMessage,
+        MediaMessage,
+        MessageType,
+        FileMedia,
+        Message,
+        makeMessage,
+    } from '../model/message'
+    import { patchData } from '../rest'
+    import Errors from '../errors'
+    import { SocketMessage, RESTCommand, SocketRestMethod } from '../socket'
+    import { Throttle, Bind } from 'lodash-decorators'
+
     let enterIsLocked = false
 
     @Component
     class ChatInput extends Vue {
         @Prop() private isEnabled!: Boolean
 
+        text = ''
         file: FileMedia | null = null
 
-        sendMessage(event: any) {
+        async sendMessage(event: any) {
             if (!event.shiftKey) {
-                const inputEl = document.getElementById('textInput') as HTMLTextAreaElement
-                const files = (document.getElementById('file-input') as HTMLInputElement)!.files
-                const text = inputEl!.value
-                const author = this.$store.getters.username
-                if (text !== '' && this.file === null) {
-                    inputEl.value = ''
-                    const newMessage = new TextMessage(text, author)
-                    this.$emit('send-message', newMessage)
-                } else if (this.file !== null) {
-                    const newMessage = new MediaMessage(text, this.file, author)
-                    newMessage.canBeLoaded = false
-                    this.$emit('send-message', newMessage)
-                    this.uploadFile()
+                const currentId = this.$store.getters.selectedConversation.id
+                try {
+                    const author = this.$store.getters.username
+                    if (this.text !== '' && this.file === null) {
+                        const newMessage = new TextMessage(this.text, author)
+                        const res = await newMessage.send(this.$socket, currentId)
+                        this.$emit('send-message', makeMessage(res.payload), currentId)
+                    } else if (this.file !== null) {
+                        const newMessage = new MediaMessage(this.text, [this.file], author)
+                        const res = await newMessage.send(this.$socket, currentId)
+                        const returnedMessage = makeMessage(res.payload) as MediaMessage
+                        returnedMessage.canBeLoaded = false
+                        this.$emit('send-message', returnedMessage, currentId)
+                        await this.uploadFile(res.payload.id)
+                    }
+                } catch (error) {
+                    if (error.info.messageId !== undefined) {
+                        this.$store.commit('mutateMessage', {
+                            conversationId: currentId,
+                            message: {
+                                id: error.info.messageId,
+                                failedToSend: true,
+                            }
+                        })
+                    } else {
+                        const text = Errors.sendMessage(error)
+                        this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    }
+                } finally {
+                     this.reset()
                 }
             }
+        }
+
+        reset() {
+            const fileInput = this.$refs.fileInput as HTMLInputElement
+            fileInput.value = ''
+            this.text = ''
+            this.removeFile()
+        }
+
+        removeFile() {
+            this.file = null
+        }
+
+        @Throttle(1500, {leading: true})
+        @Bind()
+        typing(e: Event) {
+            const currentId = this.$store.getters.selectedConversation.id
+            const socketMessage = new SocketMessage(
+                new RESTCommand('typing', SocketRestMethod.Notify),
+                currentId, undefined
+            )
+            this.$socket.emit(socketMessage)
         }
 
         appendNewLine() {
@@ -69,35 +123,40 @@
         }
 
         addFile() {
-            const file = (document.getElementById('file-input') as HTMLInputElement).files!.item(0)
+            const file = (this.$refs.fileInput as HTMLInputElement).files!.item(0)
             if (file === null) return
             
-            if(file.size > 2*1024*1024) {
-                this.$eventBus.$emit('show-notification', {error: true, text: 'Die Datei ist größer als 2MB.'})
+            if (file.size > 50*1024*1024) {
+                this.$eventBus.$emit('show-notification', {
+                    error: true, 
+                    text: 'Die Datei ist größer als 50MB.', 
+                    dontShowNative: true,
+                })
                 return
             }
 
-            this.file = { type: file.type, name: file.name }
+            this.file = { mimeType: file.type, name: file.name, id: -1 }
         }
 
-        async uploadFile() {
-            const file = (document.getElementById('file-input') as HTMLInputElement).files!.item(0)
+        async uploadFile(messageId: number): Promise<any> {
+            const file = (this.$refs.fileInput as HTMLInputElement).files!.item(0)
             if (file === null) return
 
-            const fd = new FormData();
-            fd.append('file', file);
+            const fd = new FormData()
+            fd.append('files', file)
 
+            const currentId = this.$store.getters.selectedConversation.id
             try {
-                await postData('/media', fd)
+                return await patchData(`/conversation/${currentId}/message/${messageId}/upload`, fd)
             } catch (error) {
-                const text = Errors.uploadMediaFile(error)
-                this.$eventBus.$emit('show-notification', {error: true, text})
+                error.info.messageId = messageId
+                throw error
             }
         }
 
         clickAttachFiles() {
             if (this.isEnabled) {
-                document.getElementById('file-input')!.click()
+                (this.$refs.fileInput as HTMLElement).click()
             }
         }
     }
@@ -108,6 +167,16 @@
 <style scoped>
     .chatInputOuterWrapper {
         background-color: rgba(255, 255, 255, 0.75);
+    }
+
+    .defaultToken {
+        font-size: 13px;
+        margin: auto 0;
+    }
+
+    .defaultToken .fileNameLabel {
+        margin-right: 7px;
+        cursor: pointer;
     }
     
     #textInput {
@@ -140,7 +209,7 @@
     }
 
     #toolbar svg {
-        margin-right: 25px;
+        margin-right: 15px;
         height: 30px;
     }
 

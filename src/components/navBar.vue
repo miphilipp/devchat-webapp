@@ -56,7 +56,7 @@
 	import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 	import { RESTCommand, SocketRestMethod } from '../socket'
 	import { Conversation } from '../model/conversation'
-	import { logout, getMediaToken } from '../auth'
+	import { logout } from '../auth'
 	import EditorType from '../editor'
 	import { User } from '../model/user'
 	import { MessageType } from '../model/message'
@@ -101,9 +101,8 @@
 			}
 		}
 
-		async getAvatarLink(userid: number) {
-			const token = await getMediaToken()
-			this.avatarLink = `/media/user/${userid}/avatar?token=${token}&nodefault=true`
+		getAvatarLink(userid: number) {
+			this.avatarLink = `/media/user/${userid}/avatar?nodefault=true`
 		}
 
 		@Watch('user')
@@ -168,8 +167,8 @@
 		position: absolute;
 		z-index: 100;
 		box-shadow: 0 0 5px lightgray;
-		top: 55px;
-		left: 55px;
+		top: 60px;
+		left: 80px;
 		width: 250px;
 	}
 
@@ -179,7 +178,9 @@
 
 	.leftArea {
 		grid-area: "left";
-		position: relative;
+		height: 100%;
+		display: flex;
+		align-items: flex-start;
 	}
 
 	.rightArea {
@@ -205,6 +206,7 @@
 		display: inline-block;
 		padding: 5px;
 		border-radius: 6px;
+		margin: auto 0;
 	}
 
 	.unreadIndicator {
@@ -238,12 +240,8 @@
 	}
 
 	.burgerMenu {
-		float: left;
-		position: relative;
-		top: 50%;
-		transform: translateY(-50%);
 		cursor: pointer;
-		margin-right: 20px;
+		margin: auto 20px auto 0;
 	}
 
 	.burgerMenu svg {

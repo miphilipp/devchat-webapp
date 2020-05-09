@@ -19,9 +19,9 @@
                         @input="removeValidationErrors" 
                         type="text" 
                         placeholder="Titel">
-                    <input autocomplete="off" id="newConversationRepo" type="text" placeholder="Repo-URL">
+                    <!-- <input autocomplete="off" id="newConversationRepo" type="text" placeholder="Repo-URL"> -->
                     <div class="includedContacts">
-                        <div v-for="u in includedContacts" :key="u.id" >
+                        <div v-for="u in includedContacts" :key="u.id" class="defaultToken" >
                             <span class="usernameLabel">{{u.name}}</span>
                             <span @click="removeOneInitialContact(u)">x</span>
                         </div>
@@ -48,6 +48,7 @@
     import { User, getOtherUsers } from '../model/user'
     import { RESTCommand, SocketRestMethod } from '../socket'
     import { denieInvitation, acceptInvitation } from '../model/invitations'
+    import Errors from '../errors'
 
     import { Component, Prop, Vue } from 'vue-property-decorator'
 
@@ -96,10 +97,10 @@
         async acceptInvitation(id: number) {
             try {
                 await acceptInvitation(id)
-                this.$store.dispatch('acceptInvitation', id)
+                await this.$store.dispatch('acceptInvitation', id)
             } catch (error) {
-                this.$eventBus.$emit('show-notification', {error: true, text: error})
-                console.log(error)
+                const text = Errors.acceptInvitation(error)
+                this.$eventBus.$emit('show-notification', {error: true, text})
             }
         }
 
@@ -108,14 +109,14 @@
                 await denieInvitation(id)
                 this.$store.commit('removeInvitation', id)
             } catch (error) {
-                this.$eventBus.$emit('show-notification', {error: true, text: error})
-                console.log(error)
+                const text = Errors.denieInvitation(error)
+                this.$eventBus.$emit('show-notification', {error: true, text})
             }
         }
 
         async createConversation() {
             const titleEl = document.getElementById('newConversationTitle') as HTMLInputElement
-            const repoUrl = (<HTMLInputElement>document.getElementById('newConversationRepo')).value
+            //const repoUrl = (<HTMLInputElement>document.getElementById('newConversationRepo')).value
             const title = titleEl.value
 
             if (title === '') {
@@ -127,7 +128,7 @@
             try {
                 const newConversation = await postConversation(
                     title,
-                    repoUrl,
+                    '',
                     this.includedContacts,
                     this.$store.state.chat.self,
                 )
@@ -135,8 +136,8 @@
                 this.toggleCreationForm()
                 this.select(newConversation.id, false)
             } catch (error) {
-                this.$eventBus.$emit('show-notification', {error: true, text: error})
-                console.log(error)
+                const text = Errors.createConversation(error)
+                this.$eventBus.$emit('show-notification', {error: true, text})
             }
         }
 
@@ -192,12 +193,7 @@
         flex-wrap: wrap;
     }
 
-    .includedContacts > div {
-        padding: 4px 8px;
-        border-radius: 0.75mm;
-        background: linear-gradient(80deg, #38b4fd, #23e1ff);
-        box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        color: white;
+    .includedContacts .defaultToken {
         margin-right: 5px;
         margin-bottom: 5px;
     }
@@ -269,7 +265,6 @@
 
     ul li.active {
         background-color: rgb(221, 221, 221);
-        color: rgb(170,170,170);
     }
 
     ul li:not(.emptyCell):not(.newArea)::before {
@@ -290,6 +285,7 @@
         height: 45px;
         transition: background-color 0.25s;
         cursor: pointer;
+        user-select: none;
     }
 
     #conversationList li {
