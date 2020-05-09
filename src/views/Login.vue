@@ -5,7 +5,7 @@
         <div>
             <div class="formWrapper">
                 <transition mode="out-in" name="switchOut" @enter="enterTransition">
-                <form key="signIn" v-if="mode === 0" @submit="submitLoginForm" id="loginForm">
+                <form key="signIn" v-if="mode === 0" @submit.prevent="submitLoginForm" id="loginForm">
                     <h1 id="heading">Anmelden</h1>
                     <input @input="removeLoginErrors" type="text" placeholder="Benutzername" />
                     <input @input="removeLoginErrors" type="password" placeholder="Kennwort" />
@@ -14,13 +14,13 @@
                     <button id="registerButton" class="borderless" @click="changeMode(1)">Noch nicht registriert?</button>
                 </form>
 
-                <form key="recover" v-else-if="mode === 2" id="recoveryForm" @submit="submitPasswordReset" accept-charset="utf-8">
+                <form key="recover" v-else-if="mode === 2" id="recoveryForm" @submit.prevent="submitPasswordReset" accept-charset="utf-8">
                     <h1>Passwort vergessen</h1>
                     <input type="text" class="emailInp" @input="removeRecoveryErrors" placeholder="E-Mail" />
                     <input type="submit" name="submit" class="bigButton" value="Wiederherstellen" />
                 </form>
 
-                <form key="signUp" v-else id="signupForm" @submit="submitRegisterForm" accept-charset="utf-8">
+                <form key="signUp" v-else id="signupForm" @submit.prevent="submitRegisterForm" accept-charset="utf-8">
                     <h1>Registrieren</h1>
                     <input type="text" class="usernameInp" @input="removeRegisterErrors" placeholder="Benutzername" />
                     <input type="text" class="emailInp" @input="removeRegisterErrors" placeholder="E-Mail" />
@@ -226,7 +226,7 @@ enum FormMode {
 export default class Login extends Vue {
 
     mode = FormMode.SignIn
-    message = '' // TODO: Debug
+    message = ''
     showReqeustResultMessage = false
     error = false
 
@@ -242,7 +242,6 @@ export default class Login extends Vue {
     }
 
     async submitPasswordReset(e: Event) {
-        e.preventDefault()
         const emailEl = document.querySelector('#signupForm .emailInp') as HTMLInputElement
         const email = emailEl.value
 
@@ -252,16 +251,14 @@ export default class Login extends Vue {
         }
 
         try {
-            const res = await fetchJson('/sendpasswordreset', { email }, 'POST', false)
+            await fetchJson('/sendpasswordreset', { email }, 'POST', false)
             this.showMessageBox('Überprüfen Sie ihr Mail-Postfach.', false)
         } catch (error) {
-            const errorText = Errors.login(error)
-            this.showMessageBox(errorText, true, 10000)
+            this.showMessageBox(Errors.login(error), true, 10000)
         }
     }
 
     async submitLoginForm(event: Event) {
-        event.preventDefault()
         let hasErrors = false
 
         const passwordEl = document.querySelector('#loginForm input[type="password"]') as HTMLInputElement
@@ -275,7 +272,7 @@ export default class Login extends Vue {
         }
 
         if (username === '') {
-            (<HTMLInputElement>document.querySelector('#loginForm input[type="text"]')).classList.add('error')
+            usernameEl.classList.add('error')
             hasErrors = true
         }
 
@@ -288,43 +285,30 @@ export default class Login extends Vue {
                 throw {info: {code: 2001}}
             }
 
-            const loginRes = await login(username, password)
-            if (loginRes === true) {
-                this.$router.push('/')
-            } else {
-                this.showMessageBox('Falsche Anmeldedaten', true, 5000)
-            }
+            await login(username, password)
+            this.$router.push('/')
         } catch (error) {
-            const errorText = Errors.login(error)
-            this.showMessageBox(errorText, true, 10000)
+            this.showMessageBox(Errors.login(error), true, 8000)
         }
     }
 
     removeRegisterErrors() {
-        const passwordEl = document.querySelector('#signupForm .passwordInp') as HTMLInputElement
-        const retypeEl = document.querySelector('#signupForm .retypeInp') as HTMLInputElement
-        const usernameEl = document.querySelector('#signupForm .usernameInp') as HTMLInputElement
-        const emailEl = document.querySelector('#signupForm .emailInp') as HTMLInputElement
-        passwordEl.classList.remove('error')
-        retypeEl.classList.remove('error')
-        usernameEl.classList.remove('error')
-        emailEl.classList.remove('error')
+        document.querySelector('#signupForm .passwordInp')!.classList.remove('error')
+        document.querySelector('#signupForm .retypeInp')!.classList.remove('error')
+        document.querySelector('#signupForm .usernameInp')!.classList.remove('error')
+        document.querySelector('#signupForm .emailInp')!.classList.remove('error')
     }
 
     removeRecoveryErrors() {
-        const emailEl = document.querySelector('#signupForm .emailInp') as HTMLInputElement
-        emailEl.classList.remove('error')
+        document.querySelector('#signupForm .emailInp')!.classList.remove('error')
     }
 
     removeLoginErrors() {
-        const passwordEl = document.querySelector('#loginForm input[type="password"]') as HTMLInputElement
-        const usernameEl = document.querySelector('#loginForm input[type="text"]') as HTMLInputElement
-        passwordEl.classList.remove('error')
-        usernameEl.classList.remove('error')
+        document.querySelector('#loginForm input[type="password"]')!.classList.remove('error')
+        document.querySelector('#loginForm input[type="text"]')!.classList.remove('error')
     }
 
     async submitRegisterForm(event: Event) {
-        event.preventDefault()
         const passwordEl = document.querySelector('#signupForm .passwordInp') as HTMLInputElement
         const retypeEl = document.querySelector('#signupForm .retypeInp') as HTMLInputElement
         const usernameEl = document.querySelector('#signupForm .usernameInp') as HTMLInputElement
@@ -365,7 +349,7 @@ export default class Login extends Vue {
         }
 
         try {
-            const res = await fetchJson('/user', {
+            await fetchJson('/user', {
                 username,
                 password,
                 email,
@@ -373,8 +357,7 @@ export default class Login extends Vue {
             this.mode = FormMode.SignIn
             this.showMessageBox('Registrierung erfolgreich', false, 3000)
         } catch (error) {
-            const errorText = Errors.login(error)
-            this.showMessageBox(errorText, true, 10000)
+            this.showMessageBox(Errors.login(error), true, 10000)
         }
     }
 

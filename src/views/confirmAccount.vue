@@ -100,7 +100,6 @@ export default class ConfirmAccount extends Vue {
             const res = await fetchJson('/user/confirm', {token}, 'PATCH', false)
             this.text = `${res.username}, Ihr Konto konnte erfolgreich bestätigt werden.`
         } catch (error) {
-            console.log(error)
             this.text = 'Das hat leider nicht funktioniert.'
             this.error = true
         }

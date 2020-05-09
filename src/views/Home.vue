@@ -15,7 +15,7 @@
         :selectedEditorIndex="selectedEditorIndex"  />
       <div id="workspace">
         <div class="workspaceElement chat">
-
+          <div class="typists">{{ typistsList }}</div>
         <div class="messageArea" @scroll="chatScrolled">
           <span
             id="emptyMessage"
@@ -62,6 +62,7 @@ import Sidebar from '@/components/sidebar.vue'
 import Editor from '@/components/editorArea.vue'
 import CodeMessageBox from '@/components/code-message.vue'
 import TextMessageBox from '@/components/MessageBox.vue'
+import MediaMessageBox from '@/components/media-message.vue'
 import EditorType from '../editor'
 import { Message, MessageType, makeMessage, CodeMessage } from '../model/message'
 import { RESTCommand, SocketMessage, SocketRestMethod } from '../socket'
@@ -76,6 +77,7 @@ import Errors from '../errors'
     NavBar,
     CodeMessageBox,
     TextMessageBox,
+    MediaMessageBox,
     ChatInput,
     Sidebar,
     Editor,
@@ -88,6 +90,7 @@ export default class Home extends Vue {
   selectedMessage = -1
   selectedEditorIndex = 0
   allMessagesLoaded = false
+  typists: any[] = []
   editors: EditorType[] = [
     {
       title: 'Code',
@@ -100,6 +103,43 @@ export default class Home extends Vue {
 
   created() {
     this.$socket.subscribe(new RESTCommand('message', SocketRestMethod.Post), this.appendReceivedMessage)
+    this.$socket.subscribe(new RESTCommand('typing', SocketRestMethod.Notify), this.resetTypingState)
+  }
+
+  destroyed() {
+    this.$socket.unsubscribe(new RESTCommand('message', SocketRestMethod.Post), this.appendReceivedMessage)
+    this.$socket.unsubscribe(new RESTCommand('typing', SocketRestMethod.Notify), this.resetTypingState)
+  }
+
+  get typistsList(): string {
+    if (this.typists.length === 0) return ''
+    const verb = this.typists.length > 1 ? ' schreiben...' : ' schreibt...'
+    return this.typists.map((t: any) => t.username).join(',') + verb
+  }
+
+  resetTypingState(payload: any, source: number) {
+    if (source !== this.currentConversation.id || payload.typist === this.$store.state.chat.self.id) {
+      return
+    }
+
+    const user = this.currentConversation.members.find((m: UserInConversation) => m.id === payload.typist)
+    if (user === undefined) return
+
+    const i = this.typists.findIndex((obj: any) => obj.username === user.name)
+    if (i === -1) {
+      const timer = this.makeTypistTimeout(user.name)
+      this.typists.push({username: user.name, timer})
+    } else {
+      clearTimeout(this.typists[i].timer as number)
+      this.typists[i].timer = this.makeTypistTimeout(user.name)
+    }
+  }
+
+  makeTypistTimeout(username: string): number {
+    return setTimeout(() => {
+        const index = this.typists.findIndex((obj: any) => obj.username === username)
+        if (index !== -1) this.typists.splice(index, 1)
+      }, 1600)
   }
 
   toggleSidebar() {
@@ -145,31 +185,18 @@ export default class Home extends Vue {
 
   getMessageComponent(type: number) {
     switch (type) {
-      case 0: return 'TextMessageBox'
-      case 1: return 'CodeMessageBox'
-      case 2: return 'MediaMessageBox'
-      default: throw Error('Invalid message type')
+      case MessageType.Text: return 'TextMessageBox'
+      case MessageType.Code: return 'CodeMessageBox'
+      case MessageType.Media: return 'MediaMessageBox'
+      default: throw Error(`Invalid message type ${type}`)
     }
   }
 
-  async appendMessage(message: Message) {
-    message.provisionaryId = Math.round(Math.random() * 10000000)
-    const conversationId = this.currentConversation.id
-    console.log(message)
+  appendMessage(message: Message, conversationId: number) {
     this.$store.commit('appendMessage', {message, conversationId})
-    const socketMessage = new SocketMessage(
-      new RESTCommand('message', SocketRestMethod.Post),
-      conversationId,
-      message.makeSendable())
-    try {
-      const res = await this.$socket.request(socketMessage)
-      this.$store.commit('setMessageReceptionConfirmed', {newId: res.payload.id, provisionaryId: res.payload.provisionaryId})
-      this.selectMessage(res.payload.id, message.type)
-      this.scrollToBottom()
-    } catch (error) {
-      const text = Errors.sendMessage(error)
-      this.$eventBus.$emit('show-notification', {error: true, text})
-    }
+    this.$store.commit('setMessageReceptionConfirmed', {newId: message.id, provisionaryId: message.provisionaryId})
+    this.selectMessage(message.id, message.type)
+    this.scrollToBottom()
   }
 
   async scrollToBottom() {
@@ -228,7 +255,7 @@ export default class Home extends Vue {
   }
 
   selectMessage(id: number, type: MessageType) {
-    if (type !== MessageType.Text) {
+    if (type !== MessageType.Text && type !== MessageType.Media) {
       this.selectedMessage = id
     }
   }
@@ -316,6 +343,13 @@ export default class Home extends Vue {
         left: 50%;
         transform: translate(-50%, -50%);
         text-align: center;
+    }
+
+    .typists {
+      position: absolute;
+      top: -20px;
+      left: 10px;
+      font-size: 13px;
     }
 
     .mainWrapper::after {

@@ -1,4 +1,5 @@
 import { fetchJson } from '@/rest'
+import {SocketConnection, SocketMessage, SocketRestMethod, RESTCommand} from '@/socket'
 
 enum MessageType {
     Text,
@@ -21,25 +22,28 @@ abstract class Message {
     public abstract type: MessageType
     public provisionaryId?: number
     public invisible = false
+    public failedToSend = false
 
     constructor(author: string, sentDate?: string, id?: number) {
-        if (id !== undefined) {
-            this.id = id
-        } else {
-            this.id = -1
-        }
-
+        this.id = id !== undefined ? id : -1
         this.author = author
-        if (sentDate !== undefined) {
-            this.sentDate = new Date(sentDate)
-        } else {
-            this.sentDate = new Date()
-        }
+        this.sentDate = sentDate !== undefined ? new Date(sentDate) : new Date()
+    }
+
+    async send(conn: SocketConnection, conversation: number): Promise<any> {
+        this.provisionaryId = Math.round(Math.random() * 10000000)
+        const socketMessage = new SocketMessage(
+          new RESTCommand('message', SocketRestMethod.Post),
+          conversation,
+          this.makeSendable(),
+        )
+        return conn.request(socketMessage)
     }
 
     public makeSendable(): any {
         const sendable = Object.assign({}, this)
         delete(sendable.invisible)
+        delete(sendable.failedToSend)
         return sendable
     }
 }
@@ -61,28 +65,35 @@ class TextMessage extends Message {
 }
 
 interface FileMedia {
+    id: number
     name: string
-    preview?: string
-    type: string
+    mimeType: string
+    meta?: any
 }
 
 class MediaMessage extends Message {
     public text: string
     public type: MessageType
-    public file: FileMedia
+    public files: FileMedia[]
     public canBeLoaded = true
 
     constructor(
         text: string,
-        files: FileMedia,
+        files: FileMedia[],
         author: string,
         sentDate?: string,
         id?: number) {
 
         super(author, sentDate, id)
         this.text = text
-        this.file = files
+        this.files = files
         this.type = MessageType.Media
+    }
+
+    public makeSendable(): any {
+        const sendable = super.makeSendable()
+        delete(sendable.canBeLoaded)
+        return sendable
     }
 }
 
@@ -112,8 +123,7 @@ class CodeMessage extends Message implements Lockable, Modifiable {
     }
 
     public makeSendable(): any {
-        const sendable = Object.assign({}, this)
-        delete(sendable.invisible)
+        const sendable = super.makeSendable()
         delete(sendable.lockedBy)
         delete(sendable.hasBeenModified)
         return sendable
@@ -127,14 +137,16 @@ function makeMessage(rawObject: any): Message {
 
     switch (rawObject.type) {
     case MessageType.Text:
-        return new TextMessage(
+        const tm = new TextMessage(
             rawObject.text,
             rawObject.author,
             rawObject.sentdate as string,
             rawObject.id,
         )
+        tm.provisionaryId = rawObject.provisionaryId
+        return tm
     case MessageType.Code:
-        return new CodeMessage(
+        const cm = new CodeMessage(
             rawObject.author,
             rawObject.code,
             rawObject.language,
@@ -143,14 +155,18 @@ function makeMessage(rawObject: any): Message {
             rawObject.sentdate as string,
             rawObject.id,
         )
+        cm.provisionaryId = rawObject.provisionaryId
+        return cm
     case MessageType.Media:
-        return new MediaMessage(
+        const mm = new MediaMessage(
             rawObject.text,
             rawObject.files,
             rawObject.author,
             rawObject.sentdate as string,
             rawObject.id,
         )
+        mm.provisionaryId = rawObject.provisionaryId
+        return mm
     default: throw Error('Message type not implemented')
     }
 }
@@ -179,7 +195,6 @@ async function getMessages(conversationId: number, limit: number, before?: numbe
 function reloadMessage(messageId: number, conversationId: number): Promise<Message> {
     return fetchJson(`/conversation/${conversationId}/messages/${messageId}`)
 }
-
 
 export {
     Message,

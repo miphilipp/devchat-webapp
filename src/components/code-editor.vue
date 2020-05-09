@@ -13,7 +13,9 @@
                 @input="titleChanged" 
                 v-model="title" 
                 placeholder="Titel eingeben" />
-            <button class="defaultButton" v-if="!createNew" @click="toggleLiveCoding">{{liveButtonText}}</button>
+            <button class="defaultButton liveToggle" v-if="!createNew" @click="toggleLiveCoding">
+                {{ liveButtonText }}
+            </button>
             <select 
                 v-if="languages.length > 0" 
                 @change="languageSelected"
@@ -74,7 +76,7 @@
 
 <script lang="ts">
     import ProgrammingLanguage from '../model/programmingLanguage'
-    import { Message, CodeMessage, MessageType, reloadMessage } from '../model/message'
+    import { Message, CodeMessage, MessageType, reloadMessage, makeMessage } from '../model/message'
     import { RESTCommand, SocketRestMethod, SocketMessage } from '../socket'
     import { startCodingSession, sendLiveCodingUpdate, stopCodingSession } from '../model/coding'
     import PrismEditor from 'vue-prism-editor'
@@ -96,7 +98,7 @@
         @Prop() public message!: CodeMessage
 
         selectKey = ''
-        languages: ProgrammingLanguage[] = []
+        languages: readonly ProgrammingLanguage[] = []
         newMessage: CodeMessage | null = null
         createNew = false
         hasChanges = false
@@ -113,21 +115,23 @@
                 this.languages = await ProgrammingLanguage.fetchAll()
             } catch (error) {
                 console.error(error)
-                return
             }
 
             if (this.message !== undefined) {
-                const key = this.message.language
-                const l = this.languages.find(l => l.name === key)
+                const l = this.languages.find(l => l.name === this.message.language)
                 if (l !== undefined) {
-                    this.selectKey = l.name
-                    this.text = this.message.code
-                    this.title = this.message.title
+                    this.setState(this.message.title, this.message.code, l.name)
                 }
             } else {
-                this.selectKey = this.languages[0] === undefined ? 'Blank' : this.languages[0].name
+                this.selectKey = this.languages[0] === undefined ? 'JavaScript' : this.languages[0].name
                 this.newCodeMessage()
             }
+        }
+
+        destroyed() {
+            this.$socket.unsubscribe(new RESTCommand('livesession/code/start', SocketRestMethod.Notify), this.startLiveCodingFromOutside)
+            this.$socket.unsubscribe(new RESTCommand('livesession/code/stop', SocketRestMethod.Notify), this.stopLiveCodingFromOutside)
+            this.$socket.unsubscribe(new RESTCommand('livecoding', SocketRestMethod.Patch), this.liveCodingUpdateCode)
         }
 
         afterEnterTransition() {
@@ -145,17 +149,13 @@
 
             this.hasChanges = false
             this.createNew = false
-            this.text = value.code
-            this.selectKey = value.language
-            this.languageKey = this.getlanguageKey(value.language)
-            this.title = value.title
+            this.setState(value.title, value.code, value.language)
         }
 
         async languageSelected() {
-            const key = this.selectKey
-            const l = this.languages.find(l => l.name === key)
+            const l = this.languages.find(l => l.name === this.selectKey)
             if (l === undefined) {
-                console.error(key + ' not availiable!')
+                console.error(this.selectKey + ' not availiable!')
                 return
             }
 
@@ -165,12 +165,12 @@
                 this.newMessage.language = l.name
             } else if (this.codingSession !== undefined && this.message !== undefined) {
                 try {
-                    const currentConversationId = this.$store.getters.selectedConversation.id
-                    await sendLiveCodingUpdate(this.$socket, currentConversationId,
-                        this.message.id, '', '', this.selectKey)
-                    this.mutateMessageInStore(this.message.id, currentConversationId, this.title, this.selectKey, this.text)
+                    const conversationId = this.$store.getters.selectedConversation.id
+                    await sendLiveCodingUpdate(this.$socket, conversationId, this.message.id, '', '', this.selectKey)
+                    this.mutateMessageInStore(this.message.id, conversationId, this.title, this.selectKey, this.text)
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error})
+                    const text = Errors.sendMessage(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
             } else {
                 this.hasChanges = true
@@ -197,22 +197,24 @@
                 const message = await reloadMessage(this.message.id, cId) as CodeMessage
                 this.mutateMessageInStore(this.message.id, cId, message.title, message.language, message.code)
                 this.$store.commit('setModifiedFlagOfMessage', {conversationId: cId, messageId: message.id, state: false})
-                this.text = message.code
-                this.title = message.title
-                this.selectKey = message.language
-                this.languageKey = this.getlanguageKey(message.language)
+                this.setState(message.title, message.code, message.language)
             } catch (error) {
                 const text = Errors.refreshMessage(error)
-                this.$eventBus.$emit('show-notification', {error: true, text})
+                this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
             }
+        }
+
+        setState(title: string, text: string, selectKey: string) {
+            this.text = text
+            this.title = title
+            this.selectKey = selectKey
+            this.languageKey = this.getlanguageKey(selectKey)
         }
 
         newCodeMessage() {
             this.createNew = true
             if (this.newMessage !== null) {
-                this.text = this.newMessage.code
-                this.title = this.newMessage.title
-                this.selectKey = this.newMessage.language
+                this.setState(this.newMessage.title, this.newMessage.code, this.newMessage.language)
             } else {
                 this.text = ''
                 this.title = ''
@@ -224,14 +226,22 @@
             this.$emit('deselect')
         }
 
-        submitMessage() {
+        async submitMessage() {
             if (this.newMessage !== null && this.createNew && this.title.length > 0) {
                 this.newMessage.sentDate = new Date()
                 this.newMessage.author = this.$store.getters.username
                 this.message = this.newMessage
-                this.$emit('send-message', this.message)
-                this.createNew = false
-                this.newMessage = null
+
+                const currentCId = this.$store.getters.selectedConversation.id
+                try {
+                    const res = await this.message.send(this.$socket, currentCId)
+                    this.$emit('send-message', makeMessage(res), currentCId)
+                    this.createNew = false
+                    this.newMessage = null
+                } catch (error) {
+                    const text = Errors.sendMessage(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                }
             }
         }
 
@@ -258,7 +268,7 @@
                     this.hasChanges = false
                 } catch (error) {
                     const text = Errors.saveMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text})
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
             }
         }
@@ -296,40 +306,33 @@
 
         async toggleLiveCoding() {
             if (this.message === undefined) return
-            const currentConversationId = this.$store.getters.selectedConversation.id
+            const conversationId = this.$store.getters.selectedConversation.id
+            const messageType = this.message.type
 
             if (this.codingSession !== undefined){
                 try {
-                    await stopCodingSession(
-                        this.$socket, 
-                        currentConversationId,
-                        this.codingSession.id,
-                        this.message.type,
-                    )
+                    await stopCodingSession(this.$socket, conversationId, this.codingSession.id, messageType)
                     this.$store.commit('setLockedState', {
                         newOwner: -1,
                         messageId: this.codingSession.id,
-                        conversationId: currentConversationId,
+                        conversationId: conversationId,
                     })
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error})
+                    const text = Errors.toggleLiveCodeing(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
                 return
             } else {
                 try {
-                    const res = await startCodingSession(
-                        this.$socket, 
-                        currentConversationId,
-                        this.message.id,
-                        this.message.type,
-                    )
+                    const res = await startCodingSession(this.$socket, conversationId, this.message.id, messageType)
                     this.$store.commit('setLockedState', {
                         newOwner: res.payload.newOwner,
                         messageId: this.message.id,
-                        conversationId: currentConversationId,
+                        conversationId: conversationId,
                     })
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error})
+                    const text = Errors.toggleLiveCodeing(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
             }
         }
@@ -339,18 +342,18 @@
                 this.newMessage.title = this.title
             } else if (this.codingSession !== undefined && this.message !== undefined) {
                 try {
-                    const currentConversationId = this.$store.getters.selectedConversation.id
-                    await sendLiveCodingUpdate(this.$socket, currentConversationId,
-                        this.message.id, this.title, '', '')
+                    const conversationId = this.$store.getters.selectedConversation.id
+                    await sendLiveCodingUpdate(this.$socket, conversationId, this.message.id, this.title, '', '')
                     this.mutateMessageInStore(
                         this.message.id, 
-                        currentConversationId, 
+                        conversationId, 
                         this.title, 
                         this.selectKey, 
                         this.text,
                     )
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error})
+                    const text = Errors.sendMessage(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
             } else {
                 this.hasChanges = true
@@ -365,20 +368,19 @@
             const newLanguage = data.language === '' ? this.selectKey : data.language
             this.mutateMessageInStore(data.messageId, source, newTitle, newLanguage, result[0])
             if (this.message.id === this.codingSession.id && this.createNew === false) {
-                this.text = result[0]
-                this.title = newTitle
-                this.selectKey = newLanguage
-                this.languageKey = this.getlanguageKey(newLanguage)
+                this.setState(newTitle, result[0], newLanguage)
             }
         }
 
         mutateMessageInStore(id: number, conversationId: number, title: string, lang: string, code: string) {
              this.$store.commit('mutateMessage', {
                 conversationId,
-                messageId: id, 
-                title: title, 
-                language: lang, 
-                code,
+                message: {
+                    id, 
+                    title, 
+                    language: lang, 
+                    code,
+                }
             })
         }
 
@@ -391,12 +393,12 @@
                 const patchStr = api.patch_toText(patches)
 
                 try {
-                    const currentConversationId = this.$store.getters.selectedConversation.id
-                    await sendLiveCodingUpdate(this.$socket, currentConversationId,
-                        this.message.id, '', patchStr, '')
-                    this.mutateMessageInStore(this.message.id, currentConversationId, this.title, this.selectKey, this.text)
+                    const conversationId = this.$store.getters.selectedConversation.id
+                    await sendLiveCodingUpdate(this.$socket, conversationId, this.message.id, '', patchStr, '')
+                    this.mutateMessageInStore(this.message.id, conversationId, this.title, this.selectKey, this.text)
                 } catch (error) {
-                    this.$eventBus.$emit('show-notification', {error: true, text: error})
+                    const text = Errors.sendMessage(error)
+                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
                 }
             } else {
                 this.hasChanges = true
@@ -531,6 +533,10 @@
     .languageSelection {
         float: right;
         margin: 8px 9px 0 0;
+    }
+
+    .liveToggle {
+        font-weight: 600;
     }
 
     .wrapper {

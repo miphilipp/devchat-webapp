@@ -12,6 +12,7 @@ interface UserInConversation extends User {
     hasJoined: boolean
     hasLeft: boolean
     isDeleted: boolean
+    isOnline: boolean
 }
 
 async function getUser(): Promise<User> {
@@ -28,6 +29,7 @@ function makeInitialUser(user: User, hasJoined: boolean, isAdmin: boolean): User
         isAdmin,
         hasLeft: false,
         isDeleted: false,
+        isOnline: false,
     }
 }
 
@@ -43,6 +45,7 @@ async function getUsersOfConversation(conversationId: number): Promise<UserInCon
                 hasJoined: u.hasJoined,
                 hasLeft: u.hasLeft,
                 isDeleted: u.isDeleted,
+                isOnline: false,
             }
         })
         return users as UserInConversation[]
