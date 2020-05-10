@@ -19,83 +19,84 @@ interface IDictionary {
 
 const errorMap: IDictionary = {
     login: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
         1005: 'Sie sind vorübergehend gesperrt.',
         1020: 'Das Kennwort ist falsch.',
         1021: 'Diesen Benutzer gibt es bereits.',
         1022: 'Ihr Konto wurde noch nicht bestätigt.',
         1002: 'Das Passwort entspricht nicht den Vorgaben.',
         2001: 'Diese Anwendung funktioniert nicht in einer privaten Sitzung.',
-        1023: 'Diese Funktion ist derzeit deaktiviert.',
+        1023: 'Die Registrierung ist derzeit deaktiviert.',
     },
     changePassword: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
         1006: 'Das Kennwort ist falsch.',
     },
     deleteAvatar: {
-        0: 'Ein Fehler ist aufgetreten',
-        1019: 'Das Profilbild wurde bereits gelöscht.',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     resetPassword: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
         1015: 'Der Link ist abgelaufen.',
         1016: 'Dieser Link ist ungültig.',
     },
     changeAvatar: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     deleteAccount: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     inviteUser: {
-        0: 'Ein Fehler ist aufgetreten',
-        1006: 'Keine Bereichtigung',
+        0: 'Ein Fehler ist aufgetreten.',
+        1006: 'Keine Berechtigung',
     },
     patchConversation: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     createConversation: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
+        1012: 'Ungültiger Titel',
     },
     uploadMediaFile: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     refreshMessage: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     deleteMember: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     setAdminStatus: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     revokeInvitation: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     sendMessage: {
-        0: 'Ein Fehler ist aufgetreten',
-        1006: 'Keine Bereichtigung',
+        0: 'Ein Fehler ist aufgetreten.',
+        1006: 'Keine Berechtigung',
         2002: 'Zeitüberschreitung',
+        1003: 'Nachrichtentyp wird nicht unterstützt.',
     },
     saveMessage: {
-        0: 'Ein Fehler ist aufgetreten',
-        1006: 'Keine Bereichtigung',
+        0: 'Ein Fehler ist aufgetreten.',
+        1006: 'Keine Berechtigung',
         2002: 'Zeitüberschreitung',
     },
     toggleLiveCodeing: {
-        0: 'Ein Fehler ist aufgetreten',
-        1006: 'Keine Bereichtigung',
+        0: 'Ein Fehler ist aufgetreten.',
+        1006: 'Keine Berechtigung',
         2002: 'Zeitüberschreitung',
     },
     acceptInvitation: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     denieInvitation: {
-        0: 'Ein Fehler ist aufgetreten',
+        0: 'Ein Fehler ist aufgetreten.',
     },
     sendInvitation: {
-        0: 'Ein Fehler ist aufgetreten',
-        1006: 'Keine Bereichtigung',
+        0: 'Ein Fehler ist aufgetreten.',
+        1006: 'Keine Berechtigung',
     },
 }
 
