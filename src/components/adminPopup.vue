@@ -12,7 +12,10 @@
                 <MemberCell :member="m" :canDisplayDetails="!wantsToLeave && $store.getters.amIAdmin" :avatarLink="avatarLink"></MemberCell>
             </li>
         </ul>
-        <button class="leaveButton defaultButton" v-if="!wantsToLeave" @click.stop="clickLeaveConversation">
+        <button 
+            class="leaveButton defaultButton" 
+            v-if="!wantsToLeave && conversationMembers.length !== 1" 
+            @click.stop="clickLeaveConversation">
             Unterhaltung verlassen
         </button>
         <button class="defaultButton abortButton" v-if="wantsToLeave" @click="abortLeaving">Abbrechen</button>
