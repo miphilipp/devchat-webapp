@@ -1,8 +1,6 @@
 <template>
     <div class="chatInputOuterWrapper">
         <div id="toolbar">
-            <!-- <font-awesome-icon class="styleButton" icon="bold" @click="applyStyle('bold')"></font-awesome-icon>
-            <font-awesome-icon class="styleButton" icon="italic" @click="applyStyle('italic')"></font-awesome-icon>-->
             <font-awesome-icon class="styleButton" icon="paperclip" @click="clickAttachFiles"></font-awesome-icon>
             <div v-if="file !== null" class="defaultToken" >
                 <span class="fileNameLabel">{{ file.name }}</span>
@@ -106,10 +104,9 @@
         @Throttle(1500, {leading: true})
         @Bind()
         typing(e: Event) {
-            const currentId = this.$store.getters.selectedConversation.id
             const socketMessage = new SocketMessage(
                 new RESTCommand('typing', SocketRestMethod.Notify),
-                currentId, undefined
+                this.$store.getters.selectedConversation.id, undefined
             )
             this.$socket.emit(socketMessage)
         }
