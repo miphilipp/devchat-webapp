@@ -170,7 +170,7 @@
                     this.mutateMessageInStore(this.message.id, conversationId, this.title, this.selectKey, this.text)
                 } catch (error) {
                     const text = Errors.sendMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             } else {
                 this.hasChanges = true
@@ -200,7 +200,7 @@
                 this.setState(message.title, message.code, message.language)
             } catch (error) {
                 const text = Errors.refreshMessage(error)
-                this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                this.$eventBus.$emit('show-notification', {error: true, text})
             }
         }
 
@@ -240,7 +240,7 @@
                     this.newMessage = null
                 } catch (error) {
                     const text = Errors.sendMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             }
         }
@@ -268,7 +268,7 @@
                     this.hasChanges = false
                 } catch (error) {
                     const text = Errors.saveMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             }
         }
@@ -319,7 +319,7 @@
                     })
                 } catch (error) {
                     const text = Errors.toggleLiveCodeing(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
                 return
             } else {
@@ -332,7 +332,7 @@
                     })
                 } catch (error) {
                     const text = Errors.toggleLiveCodeing(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             }
         }
@@ -353,7 +353,7 @@
                     )
                 } catch (error) {
                     const text = Errors.sendMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             } else {
                 this.hasChanges = true
@@ -398,7 +398,7 @@
                     this.mutateMessageInStore(this.message.id, conversationId, this.title, this.selectKey, this.text)
                 } catch (error) {
                     const text = Errors.sendMessage(error)
-                    this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                    this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             } else {
                 this.hasChanges = true

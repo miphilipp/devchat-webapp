@@ -82,7 +82,7 @@
                         })
                     } else {
                         const text = Errors.sendMessage(error)
-                        this.$eventBus.$emit('show-notification', {error: true, text, dontShowNative: true})
+                        this.$eventBus.$emit('show-notification', {error: true, text})
                     }
                 } finally {
                      this.reset()
@@ -126,8 +126,7 @@
             if (file.size > 50*1024*1024) {
                 this.$eventBus.$emit('show-notification', {
                     error: true, 
-                    text: 'Die Datei ist größer als 50MB.', 
-                    dontShowNative: true,
+                    text: 'Die Datei ist größer als 50MB.',
                 })
                 return
             }

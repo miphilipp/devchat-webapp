@@ -129,7 +129,11 @@ export default class App extends Vue {
 
     this.$store.commit('appendMessage', {message, conversationId: source})
     if (source !== this.$store.getters.selectedConversation.id) {
-      this.$eventBus.$emit('show-notification', {heading: 'Neue Nachricht', text: 'In ' + conversation.title})
+      this.$eventBus.$emit('show-notification', {
+        heading: 'Neue Nachricht', 
+        text: 'In ' + conversation.title,
+        showNative: true,
+      })
       this.$store.commit('incrementUnread', source)
     }
   }
@@ -137,7 +141,11 @@ export default class App extends Vue {
   showLiveCodingNotification(payload: any, source: number) {
     if (source !== this.$store.getters.selectedConversation.id) {
       const conversation: Conversation = this.$store.state.chat.conversations.find((c: Conversation) => c.id === source)
-      this.$eventBus.$emit('show-notification', {heading: 'Live-Coding', text: 'In ' + conversation.title})
+      this.$eventBus.$emit('show-notification', {
+        heading: 'Live-Coding', 
+        text: 'In ' + conversation.title,
+        showNative: true,
+      })
     }
   }
 
@@ -162,7 +170,11 @@ export default class App extends Vue {
   addInvitation(payload: any) {
     if (payload.recipient === this.$store.state.chat.self.id) {
       this.$store.commit('addInvitation', payload)
-      this.$eventBus.$emit('show-notification', {heading: 'Neue Einladung', text: payload.conversationTitle})
+      this.$eventBus.$emit('show-notification', {
+        heading: 'Neue Einladung', 
+        text: payload.conversationTitle,
+        showNative: true,
+      })
     } else {
       this.$store.commit('addUnconfirmedMemberToConversation', {
         userId: payload.recipient,
@@ -207,7 +219,7 @@ export default class App extends Vue {
     const heading = data.error === true ? 'Fehler' : data.heading
     this.isNotificationError = data.error !== undefined ? data.error : false
 
-    if (supportsNotifications() && Notification.permission === 'granted' && !data.dontShowNative) {
+    if (supportsNotifications() && Notification.permission === 'granted' && data.showNative) {
       const n = new Notification(heading, {body: text})
       return
     }
@@ -234,7 +246,7 @@ export default class App extends Vue {
 
   initStore() {
     this.$store.commit('setConnected', true)
-    this.$eventBus.$emit('show-notification', {heading: 'Verbindung hergestellt', dontShowNative: true})
+    this.$eventBus.$emit('show-notification', {heading: 'Verbindung hergestellt'})
     this.$store.dispatch('init')
   }
 
@@ -258,7 +270,7 @@ export default class App extends Vue {
 
   socketConnectionLost() {
     this.$store.commit('setConnected', false)
-    this.$eventBus.$emit('show-notification', {error: true, text: 'Verbindung zu Server verloren.', dontShowNative: true})
+    this.$eventBus.$emit('show-notification', {error: true, text: 'Verbindung zu Server verloren.'})
   }
 
   showError() {
