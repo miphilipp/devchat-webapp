@@ -150,10 +150,8 @@ export default class Preferences extends Vue {
   }
 
   removePasswordChangeErrors() {
-    const oldPasswordEl = document.querySelector('.password-settings .old') as HTMLInputElement
-    const newPasswordEl = document.querySelector('.password-settings .new') as HTMLInputElement
-    oldPasswordEl.classList.remove('error')
-    newPasswordEl.classList.remove('error')
+    document.querySelector('.password-settings .old')!.classList.remove('error')
+    document.querySelector('.password-settings .new')!.classList.remove('error')
   }
 
   async confirmDelete(res: boolean) {

@@ -189,9 +189,7 @@ class ChatModule extends VuexModule {
   @Mutation
   private addUnconfirmedMemberToConversation(data: any) {
     const conversation = this.conversations.find((c: Conversation) => c.id === data.conversationId)
-    if (conversation === undefined) {
-      return
-    }
+    if (conversation === undefined) return
 
     const member = conversation.members.find((c: UserInConversation) => c.id === data.userId)
     if (member !== undefined) {
@@ -205,9 +203,7 @@ class ChatModule extends VuexModule {
   @Mutation
   private removeMember(data: Invitation) {
     const conversation = this.conversations.find((c: Conversation) => c.id === data.conversationId)
-    if (conversation === undefined) {
-      return
-    }
+    if (conversation === undefined) return
 
     const memberToRemoveIndex = conversation.members.findIndex((u: UserInConversation) => u.id === data.recipient)
     conversation.members.splice(memberToRemoveIndex, 1)
@@ -240,9 +236,7 @@ class ChatModule extends VuexModule {
   @Mutation
   private removeInvitation(id: number) {
     const invitation = this.invitations.find((i: Invitation) => i.conversationId === id )
-    if (invitation === undefined) {
-      return
-    }
+    if (invitation === undefined) return
 
     for (let i = 0; i < this.invitations.length; i++) {
       if ( this.invitations[i].conversationId === invitation.conversationId) {
@@ -277,9 +271,8 @@ class ChatModule extends VuexModule {
   @Action
   private async acceptInvitation(id: number) {
     const invitation = this.invitations.find((i: Invitation) =>  i.conversationId === id )
-    if (invitation === undefined) {
-      return
-    }
+    if (invitation === undefined) return
+
     const invitationIndex = this.invitations.findIndex((i: Invitation) =>  i.conversationId === id )
     this.invitations.splice(invitationIndex, 1)
 
