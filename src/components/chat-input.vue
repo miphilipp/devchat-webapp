@@ -45,8 +45,6 @@
     import { SocketMessage, RESTCommand, SocketRestMethod } from '../socket'
     import { Throttle, Bind } from 'lodash-decorators'
 
-    let enterIsLocked = false
-
     @Component
     class ChatInput extends Vue {
         @Prop() private isEnabled!: Boolean
