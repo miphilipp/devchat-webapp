@@ -307,6 +307,7 @@ export default class App extends Vue {
     -webkit-appearance: unset;
     padding: 4px 12px;
     cursor: pointer;
+    outline: none;
     box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
     transition: background-color 0.2s;
   }
