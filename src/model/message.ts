@@ -30,14 +30,14 @@ abstract class Message {
         this.sentDate = sentDate !== undefined ? new Date(sentDate) : new Date()
     }
 
-    async send(conn: SocketConnection, conversation: number): Promise<any> {
+    async send(conn: SocketConnection, conversation: number): Promise<Message> {
         this.provisionaryId = Math.round(Math.random() * 10000000)
         const socketMessage = new SocketMessage(
           new RESTCommand('message', SocketRestMethod.Post),
           conversation,
           this.makeSendable(),
         )
-        return conn.request(socketMessage)
+        return makeMessage((await conn.request(socketMessage)).payload)
     }
 
     public makeSendable(): any {

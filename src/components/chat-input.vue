@@ -47,7 +47,7 @@
 
     @Component
     class ChatInput extends Vue {
-        @Prop() private isEnabled!: Boolean
+        @Prop({default: true}) private isEnabled!: Boolean
 
         text = ''
         file: FileMedia | null = null
@@ -60,14 +60,13 @@
                     if (this.text !== '' && this.file === null) {
                         const newMessage = new TextMessage(this.text, author)
                         const res = await newMessage.send(this.$socket, currentId)
-                        this.$emit('send-message', makeMessage(res.payload), currentId)
+                        this.$emit('send-message', res, currentId)
                     } else if (this.file !== null) {
                         const newMessage = new MediaMessage(this.text, [this.file], author)
-                        const res = await newMessage.send(this.$socket, currentId)
-                        const returnedMessage = makeMessage(res.payload) as MediaMessage
-                        returnedMessage.canBeLoaded = false
-                        this.$emit('send-message', returnedMessage, currentId)
-                        await this.uploadFile(res.payload.id)
+                        const res = await newMessage.send(this.$socket, currentId) as MediaMessage
+                        res.canBeLoaded = false
+                        this.$emit('send-message', res, currentId)
+                        await this.uploadFile(res.id)
                     }
                 } catch (error) {
                     if (error.info.messageId !== undefined) {

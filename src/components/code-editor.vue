@@ -235,7 +235,7 @@
                 const currentCId = this.$store.getters.selectedConversation.id
                 try {
                     const res = await this.message.send(this.$socket, currentCId)
-                    this.$emit('send-message', makeMessage(res), currentCId)
+                    this.$emit('send-message', res, currentCId)
                     this.createNew = false
                     this.newMessage = null
                 } catch (error) {

@@ -63,8 +63,8 @@
             return this.$store.getters.messagesOfType(this.selectedEditor.messageType)
         }
 
-        relaySendMessage(message: Message) {
-            this.$emit('send-message', message)
+        relaySendMessage(message: Message, conversationId: number) {
+            this.$emit('send-message', message, conversationId)
         }
 
         deselectMessage() {
