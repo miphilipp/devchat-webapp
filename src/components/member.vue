@@ -121,6 +121,7 @@ export default MemberCell
         right: -158px;
         width: 140px;
         top: -17px;
+        user-select: none;
     }
 
     .member-actions button {
