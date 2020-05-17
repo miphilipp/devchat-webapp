@@ -12,7 +12,7 @@ import { Invitation, getAllInvitations } from '@/model/invitations'
 
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
-Vue.config.devtools = true
+Vue.config.devtools = true // DEBUG
 Vue.use(Vuex)
 
 @Module
@@ -61,6 +61,7 @@ class ChatModule extends VuexModule {
       return true
     })
     conversation.messages.unshift(...filtered)
+    conversation.messages.sort((a: Message, b: Message) => a.id - b.id )
   }
 
   @Mutation
@@ -352,9 +353,7 @@ class ChatModule extends VuexModule {
 }
 
 export default new Vuex.Store({
-  state: {
-
-  },
+  state: {},
   modules: {
     chat: ChatModule,
   },
