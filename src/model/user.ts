@@ -58,7 +58,7 @@ function changePassword(oldPassword: string, newPassword: string): Promise<any> 
     return fetchJson('/user/password', {
         oldPassword,
         newPassword,
-    }, 'PATCH')
+    }, 'PUT')
 }
 
 function deleteAccount(): Promise<any> {
