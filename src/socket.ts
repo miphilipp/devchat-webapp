@@ -175,7 +175,7 @@ class SocketConnection {
     public request(message: SocketMessage): Promise<any> {
         const promise = new Promise<any>((resolve, reject) => {
             if (this.socket === undefined) {
-                reject({code: 2003, message: 'Not connected'})
+                reject({info: {code: 2003, message: 'Not connected'}})
                 return
             }
 
@@ -183,7 +183,7 @@ class SocketConnection {
                 this.socket.send(JSON.stringify(message))
                 const timer = setTimeout(() => {
                     this.openRequests.delete(message.id)
-                    reject({code: 2002, message: 'timeout'})
+                    reject({info: {code: 2002, message: 'timeout'}})
                 }, 5000)
                 this.openRequests.set(message.id, {
                     rejector: reject,
