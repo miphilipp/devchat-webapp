@@ -296,7 +296,7 @@ export default class Home extends Vue {
     const socketMessage = new SocketMessage(
       new RESTCommand('message/read', SocketRestMethod.Notify),
       currentID,
-      {conversationID: currentID})
+      {conversationId: currentID})
 
     this.$socket.emit(socketMessage)
     this.$store.commit('clearUnreadMarker')
