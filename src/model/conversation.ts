@@ -88,6 +88,7 @@ async function getCompleteConversation(id: number, title: string, nUnreadMessage
     }
 
     conversation.messages = messages
+    conversation.messages.sort((a: Message, b: Message) => a.id - b.id )
     return conversation
 }
 
