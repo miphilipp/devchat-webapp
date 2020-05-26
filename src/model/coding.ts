@@ -8,7 +8,7 @@ import { MessageType } from './message'
 
 function startCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
     return socket.request(new SocketMessage(
-        new RESTCommand('livesession/code/start', SocketRestMethod.Notify), source, {
+        new RESTCommand('livesession/code', SocketRestMethod.Post), source, {
             id: messageId,
             type,
         },
@@ -17,7 +17,7 @@ function startCodingSession(socket: SocketConnection, source: number, messageId:
 
 function stopCodingSession(socket: SocketConnection, source: number, messageId: number, type: MessageType): Promise<any> {
     return socket.request(new SocketMessage(
-        new RESTCommand('livesession/code/stop', SocketRestMethod.Notify), source, {
+        new RESTCommand('livesession/code', SocketRestMethod.Delete), source, {
             id: messageId,
             type,
         },
@@ -33,7 +33,7 @@ function sendLiveCodingUpdate(
     patch: string,
     language: string): Promise<any> {
     const request = new SocketMessage(
-        new RESTCommand('livecoding', SocketRestMethod.Patch), source, {
+        new RESTCommand('livesession/code', SocketRestMethod.Patch), source, {
             messageId,
             patch,
             language,

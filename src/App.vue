@@ -67,7 +67,7 @@ export default class App extends Vue {
     this.$eventBus.$on('hide-prompt', this.hidePrompt)
     this.$eventBus.$on('show-prompt', this.showPrompt)
 
-    this.$socket.subscribe(new RESTCommand('livesession/code/start', SocketRestMethod.Notify), this.showLiveCodingNotification)
+    this.$socket.subscribe(new RESTCommand('livesession/code', SocketRestMethod.Post), this.showLiveCodingNotification)
     this.$socket.subscribe(new RESTCommand('invitation', SocketRestMethod.Patch), this.invitationChanged)
     this.$socket.subscribe(new RESTCommand('invitation', SocketRestMethod.Delete), this.removeInvitation)
     this.$socket.subscribe(new RESTCommand('invitation', SocketRestMethod.Post), this.addInvitation)

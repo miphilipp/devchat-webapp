@@ -107,9 +107,9 @@
         languageKey = 'js'
 
         async created () {
-            this.$socket.subscribe(new RESTCommand('livesession/code/start', SocketRestMethod.Notify), this.startLiveCodingFromOutside)
-            this.$socket.subscribe(new RESTCommand('livesession/code/stop', SocketRestMethod.Notify), this.stopLiveCodingFromOutside)
-            this.$socket.subscribe(new RESTCommand('livecoding', SocketRestMethod.Patch), this.liveCodingUpdateCode)
+            this.$socket.subscribe(new RESTCommand('livesession/code', SocketRestMethod.Post), this.startLiveCodingFromOutside)
+            this.$socket.subscribe(new RESTCommand('livesession/code', SocketRestMethod.Delete), this.stopLiveCodingFromOutside)
+            this.$socket.subscribe(new RESTCommand('livesession/code', SocketRestMethod.Patch), this.liveCodingUpdateCode)
 
             try {
                 this.languages = await ProgrammingLanguage.fetchAll()
@@ -129,9 +129,9 @@
         }
 
         destroyed() {
-            this.$socket.unsubscribe(new RESTCommand('livesession/code/start', SocketRestMethod.Notify), this.startLiveCodingFromOutside)
-            this.$socket.unsubscribe(new RESTCommand('livesession/code/stop', SocketRestMethod.Notify), this.stopLiveCodingFromOutside)
-            this.$socket.unsubscribe(new RESTCommand('livecoding', SocketRestMethod.Patch), this.liveCodingUpdateCode)
+            this.$socket.unsubscribe(new RESTCommand('livesession/code', SocketRestMethod.Post), this.startLiveCodingFromOutside)
+            this.$socket.unsubscribe(new RESTCommand('livesession/code', SocketRestMethod.Delete), this.stopLiveCodingFromOutside)
+            this.$socket.unsubscribe(new RESTCommand('livesession/code', SocketRestMethod.Patch), this.liveCodingUpdateCode)
         }
 
         afterEnterTransition() {
