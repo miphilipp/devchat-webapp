@@ -247,7 +247,11 @@ export default class App extends Vue {
   initStore() {
     this.$store.commit('setConnected', true)
     this.$eventBus.$emit('show-notification', {heading: 'Verbindung hergestellt'})
-    this.$store.dispatch('init')
+    try {
+      this.$store.dispatch('init')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   setup() {
