@@ -173,6 +173,7 @@
     }
     
     #textInput {
+        font-family: inherit;
         resize: none;
         margin: 0 auto 10px auto;
         display: block;
