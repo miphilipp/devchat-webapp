@@ -136,7 +136,7 @@ export default class Home extends Vue {
   }
 
   makeTypistTimeout(username: string): number {
-    return setTimeout(() => {
+    return window.setTimeout(() => {
         const index = this.typists.findIndex((obj: any) => obj.username === username)
         if (index !== -1) this.typists.splice(index, 1)
       }, 1600)

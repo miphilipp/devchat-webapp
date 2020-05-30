@@ -86,7 +86,7 @@ class SocketConnection {
                 this.connectHandler()
             }
 
-            this.heartbeatTimer = setInterval(() => {
+            this.heartbeatTimer = window.setInterval(() => {
                 this.sendHeartbeat()
             }, 2000)
         }
@@ -101,7 +101,7 @@ class SocketConnection {
             }
 
             if (event.code === 1006) {
-                this.reconnectTimer = setTimeout(() => {
+                this.reconnectTimer = window.setTimeout(() => {
                     this.connect()
                 }, this.reconnectTimeout)
                 const timeout = this.reconnectTimeout
