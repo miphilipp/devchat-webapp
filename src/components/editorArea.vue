@@ -12,14 +12,16 @@
         </keep-alive>
         <div class="messageSelectionList">
             <h3>{{listTitle}}</h3>
-            <ul>
-                <li v-for="m in messagesOfType" 
-                    :key="m.id" 
-                    :class="{'active': selectedMessage === m.id}"
-                    @click="selectMesssage(m.id)">
-                    {{ m.title }}
-                </li>
-            </ul>
+            <div>
+                <ul>
+                    <li v-for="m in messagesOfType" 
+                        :key="m.id" 
+                        :class="{'active': selectedMessage === m.id}"
+                        @click="selectMesssage(m.id)">
+                        {{ m.title }}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -30,7 +32,7 @@
     import { MessageType, Message, getMessagesOfType } from '../model/message'
     import EditorType from '../editor'
 
-    import CodeEditor from "./code-editor.vue"
+    import CodeEditor from './code-editor.vue'
     import { Conversation } from '../model/conversation'
 
     @Component({
@@ -45,7 +47,7 @@
         get editorProps() {
             if (this.selectedEditor === undefined) return {}
             switch (this.selectedEditor.component) {
-            case "codeEditor": return {message: this.messagesOfType.find((m: Message) => m.id === this.selectedMessage)}
+            case 'codeEditor': return {message: this.messagesOfType.find((m: Message) => m.id === this.selectedMessage)}
             default: return {}
             }
         }
@@ -94,12 +96,19 @@
     }
 
     .messageSelectionList {
+        display: flex;
+        flex-direction: column;
         width: 180px;
         border-radius: 15px;
         border-top: 2px solid white;
         background: linear-gradient(30deg, #e3ffe7 0%, #dde9ff 100%);
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
         z-index: 100;
+    }
+
+    .messageSelectionList > div {
+        flex: 1;
+        overflow: scroll;
     }
 
     .messageSelectionList ul {
