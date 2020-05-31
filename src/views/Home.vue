@@ -87,7 +87,6 @@ export default class Home extends Vue {
   showSidebar = false
   scrollOverride = false
   isLoading = false
-  selectedMessage = -1
   selectedEditorIndex = 0
   allMessagesLoaded = false
   typists: any[] = []
@@ -254,14 +253,18 @@ export default class Home extends Vue {
     return this.editors[this.selectedEditorIndex]
   }
 
+  get selectedMessage(): number {
+    return this.$store.state.chat.selectedMessageId
+  }
+
   selectMessage(id: number, type: MessageType) {
     if (type !== MessageType.Text && type !== MessageType.Media) {
-      this.selectedMessage = id
+      this.$store.commit('setSelectedMessageId', id)
     }
   }
 
   deselect() {
-    this.selectedMessage = -1
+    this.$store.commit('setSelectedMessageId', -1)
   }
 
   async loadMoreMessage() {

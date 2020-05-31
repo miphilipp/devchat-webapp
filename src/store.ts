@@ -19,10 +19,24 @@ Vue.use(Vuex)
 class ChatModule extends VuexModule {
   public conversations: Conversation[] = []
   public selectedConversationIndex = -1
+  public selectedMessageId = -1
   public invitations: Invitation[] = []
   public self: User = {id: -1, name: ''}
   public loggedIn = false
   public isConnected = false
+
+  @Mutation
+  private setSelectedMessageId(id: number) {
+    try {
+        window.localStorage.setItem('state', JSON.stringify({
+          conversation: this.conversations[this.selectedConversationIndex].id,
+          message: id,
+        }))
+    } catch (error) {
+        console.error(error)
+    }
+    this.selectedMessageId = id
+  }
 
   @Mutation
   private setConnected(state: boolean) {
@@ -177,14 +191,17 @@ class ChatModule extends VuexModule {
 
   @Mutation
   private setSelectedConversation(conversationId: number) {
+    const index = this.conversations.findIndex((c: Conversation) => c.id === conversationId)
+    this.selectedConversationIndex = index
+
     try {
-        window.localStorage.setItem('lastSelectedConversationId', String(conversationId))
+      window.localStorage.setItem('state', JSON.stringify({
+        conversation: this.selectedConversationIndex === -1 ? -1 : conversationId,
+        message: -1,
+      }))
     } catch (error) {
         console.error(error)
     }
-
-    const index = this.conversations.findIndex((c: Conversation) => c.id === conversationId)
-    this.selectedConversationIndex = index
   }
 
   @Mutation
@@ -258,14 +275,15 @@ class ChatModule extends VuexModule {
     this.context.commit('setConversations', conversations)
 
     if (conversations.length > 0) {
-      const selectedConversationIdStr = window.localStorage.getItem('lastSelectedConversationId')
-      const selectedConversationId = Number.parseInt(selectedConversationIdStr || '0', 10)
-      let selectedConversationIndex = conversations.findIndex((c: Conversation) => c.id === selectedConversationId)
-      if (selectedConversationIndex === -1) {
-        selectedConversationIndex = 0
+      const firstId = this.conversations[0].id
+      const stateStr = window.localStorage.getItem('state')
+      if (stateStr !== null) {
+        const state = JSON.parse(stateStr)
+        this.context.commit('setSelectedConversation', state.conversation || firstId)
+        this.context.commit('setSelectedMessageId', state.message || -1)
+      } else {
+        this.context.commit('setSelectedConversation', firstId)
       }
-
-      this.context.commit('setSelectedConversation', conversations[selectedConversationIndex].id)
     }
   }
 
