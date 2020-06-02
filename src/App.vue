@@ -304,11 +304,16 @@ export default class App extends Vue {
     color: white;
   }
 
+  input[type="text"] {
+    border: 1px solid lightgray;
+  }
+
   .defaultButton {
     border: 1px solid lightgray;
     background-color: white;
     border-radius: 0.75mm;
     -webkit-appearance: unset;
+    font-size: 12px;
     padding: 4px 12px;
     cursor: pointer;
     outline: none;
