@@ -2,4 +2,8 @@
 
 ## Kompilierung
 
+```sh
+npm run build
+```
+
 ## Abhänigkeiten
