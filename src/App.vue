@@ -290,6 +290,9 @@ export default class App extends Vue {
 </script>
 
 <style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Contrail+One&display=swap');
+
   html {
     min-height: 100vh;
     height: 100%;

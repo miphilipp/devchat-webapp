@@ -1,10 +1,9 @@
 <template>
 	<div id="outerWrapper">
-        <!-- <img id="logo" src="@/assets/logo.png" alt="Produktlogo"> -->
         <div class="headings">
             <h1>DevChat</h1>
             <div class="headingSeparator"></div>
-            <h1>Anmelden</h1>
+            <h1>{{ formTitle }}</h1>
         </div>
         <div class="contentArea">
             <div class="formWrapper">
@@ -16,29 +15,43 @@
                     id="loginForm" 
                     class="clearfix">
 
-                    <input @input="removeLoginErrors" type="text" placeholder="Benutzername" />
-                    <input @input="removeLoginErrors" type="password" placeholder="Kennwort" />
+                    <label for="signin_name">Benutzername</label>
+                    <input @input="removeLoginErrors" type="text" id="signin_name" />
+                    <label for="signin_password">Kennwort</label>
+                    <input @input="removeLoginErrors" type="password" id="signin_password" />
                     <input id="submit" type="submit" value="Anmelden" class="bigButton" />
                 </form>
 
                 <form key="recover" v-else-if="mode === 2" id="recoveryForm" @submit.prevent="submitPasswordReset" accept-charset="utf-8">
-                    <input type="text" class="emailInp" @input="removeRecoveryErrors" placeholder="E-Mail" />
+                    <label for="recover_mail">E-Mail</label>
+                    <input type="text" class="emailInp" @input="removeRecoveryErrors" id="recover_mail" />
                     <input type="submit" name="submit" class="bigButton" value="Wiederherstellen" />
                 </form>
 
                 <form key="signUp" v-else id="signupForm" @submit.prevent="submitRegisterForm" accept-charset="utf-8">
-                    <input type="text" class="usernameInp" @input="removeRegisterErrors" placeholder="Benutzername" />
-                    <input type="text" class="emailInp" @input="removeRegisterErrors" placeholder="E-Mail" />
-                    <input type="password" class="passwordInp" @input="removeRegisterErrors" placeholder="Kennwort" />
-                    <input type="password" class="retypeInp" @input="removeRegisterErrors" placeholder="Kennwort erneut eingeben" />
+                    <label for="signup_name">Benutzername</label>
+                    <input type="text" class="usernameInp" @input="removeRegisterErrors" id="signup_name" />
+                    <label for="recover_mail">E-Mail</label>
+                    <input type="text" class="emailInp" @input="removeRegisterErrors" id="signup_mail" />
+                    <label for="signup_password">Kennwort</label>
+                    <input type="password" class="passwordInp" @input="removeRegisterErrors" id="signup_password" />
+                    <label for="signup_password_check">Kennwort erneut eingeben</label>
+                    <input type="password" class="retypeInp" @input="removeRegisterErrors" id="signup_password_check" />
                     <input type="submit" name="submit" class="bigButton" value="Registrieren" />
                 </form>
                 </transition>
             </div>
 
             <div class="additionalButtons clearfix">
-                <button id="recoveryButton" class="borderless" @click="changeMode(2)">Passwort vergessen?</button>
-                <button id="registerButton" class="borderless" @click="changeMode(1)">Noch nicht registriert?</button>
+                <button v-show="mode !== 0" id="signinButton" class="borderless" @click="changeMode(0)">
+                    Anmelden
+                </button>
+                <button v-show="mode !== 2" id="recoveryButton" class="borderless" @click="changeMode(2)">
+                    Passwort vergessen?
+                </button>
+                <button v-show="mode !== 1" id="registerButton" class="borderless" @click="changeMode(1)">
+                    Noch nicht registriert?
+                </button>
             </div>
 
             <transition name="slide-in">
@@ -76,16 +89,16 @@
     }
 
     .requestResultMessage {
-        transform: translateY(115px);
-        width: 330px;
-        height: 70px;
+        transform: translateY(-70px);
+        width: 302px;
+        height: 100px;
         position: absolute;
         display: table;
-        bottom: 0;
+        top: 0;
         left: 0;
         z-index: 100;
-        border-bottom-left-radius: 1.5mm;
-        border-bottom-right-radius: 1.5mm;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
         text-align: center;
     }
 
@@ -115,10 +128,9 @@
     }
 
     #outerWrapper .formWrapper {
-        padding: 60px 40px;
+        padding: 50px 40px;
         border-top: 3px solid white;
         color: white;
-        width: 222px;
         background: linear-gradient(to right,#FFCB00, #FFB02F);
         box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
         border-radius: 30px;
@@ -134,10 +146,9 @@
 
     .borderless {
         display: block;
-        margin: 0 auto;
-        display: inline-block;
+        margin-bottom: 10px;
         -webkit-appearance: none;
-        color: #00A4FF;
+        color: #009bf1;
         text-shadow: 0 0 3px white;
         background-color: transparent;
         font-size: 15px;
@@ -161,9 +172,9 @@
     }
 
     h1 {
-        font-family: "Courir";
+        font-family: "Contrail One", sans-serif;
         font-weight: 500;
-        font-size: 45px;
+        font-size: 47px;
         margin: 0;
     }
 
@@ -171,23 +182,30 @@
         margin: auto 80px auto 0;
     }
 
+    #signupForm input[type="text"], #signupForm input[type="password"] {
+        margin-bottom: 15px;
+    }
+
     form input[type="text"], form input[type="password"] {
         width: 210px;
         height: 20px;
         display: block;
-        margin-bottom: 25px;
+        margin-bottom: 22px;
         border: 1px solid white;
         padding: 5px;
         box-shadow: 0 0 16px #00000029;
         border-radius: 6px;
         font-size: 12px;
-        color:  lightgray !important;
+        color:  black !important;
         background-color: white;
         transition: opacity .2s ease-in, border 0.2s;
     }  
 
-    .additionalButtons {
-        white-space: nowrap;
+    form label {
+        color: #505050;
+        display: inline-block;
+        margin: 0 0 5px 5px;
+        font-size: 15px;
     }
 
     .headingSeparator {
@@ -257,11 +275,11 @@ export default class Login extends Vue {
     enterTransition() {
         const el = document.querySelector('.formWrapper') as HTMLInputElement
         if (this.mode === FormMode.Recover) {
-            el.style.height = '130px'
+            el.style.height = '110px'
         } else if (this.mode === FormMode.Register) {
-            el.style.height = '250px'
+            el.style.height = '300px'
         } else {
-            el.style.height = '250px'
+            el.style.height = '195px'
         }
     }
 
@@ -393,6 +411,15 @@ export default class Login extends Vue {
             setTimeout(() => {
                 this.showReqeustResultMessage = false
             }, autoHide)
+        }
+    }
+
+    get formTitle(): string {
+        switch (this.mode) {
+            case FormMode.SignIn:   return 'Anmelden'
+            case FormMode.Register: return 'Registrieren'
+            case FormMode.Recover:  return 'Wiederherstellung'
+            default:                return ''
         }
     }
 
