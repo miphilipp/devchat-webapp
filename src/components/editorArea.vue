@@ -109,6 +109,7 @@
     .messageSelectionList > div {
         flex: 1;
         overflow: scroll;
+        overflow-x: hidden;
     }
 
     .messageSelectionList ul {
