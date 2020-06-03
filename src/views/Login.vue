@@ -1,27 +1,32 @@
 <template>
 	<div id="outerWrapper">
         <!-- <img id="logo" src="@/assets/logo.png" alt="Produktlogo"> -->
-
-        <div>
+        <div class="headings">
+            <h1>DevChat</h1>
+            <div class="headingSeparator"></div>
+            <h1>Anmelden</h1>
+        </div>
+        <div class="contentArea">
             <div class="formWrapper">
                 <transition mode="out-in" name="switchOut" @enter="enterTransition">
-                <form key="signIn" v-if="mode === 0" @submit.prevent="submitLoginForm" id="loginForm">
-                    <h1 id="heading">Anmelden</h1>
+                <form 
+                    key="signIn" 
+                    v-if="mode === 0" 
+                    @submit.prevent="submitLoginForm" 
+                    id="loginForm" 
+                    class="clearfix">
+
                     <input @input="removeLoginErrors" type="text" placeholder="Benutzername" />
                     <input @input="removeLoginErrors" type="password" placeholder="Kennwort" />
                     <input id="submit" type="submit" value="Anmelden" class="bigButton" />
-                    <button id="recoveryButton" class="borderless" @click="changeMode(2)">Passwort vergessen?</button>
-                    <button id="registerButton" class="borderless" @click="changeMode(1)">Noch nicht registriert?</button>
                 </form>
 
                 <form key="recover" v-else-if="mode === 2" id="recoveryForm" @submit.prevent="submitPasswordReset" accept-charset="utf-8">
-                    <h1>Passwort vergessen</h1>
                     <input type="text" class="emailInp" @input="removeRecoveryErrors" placeholder="E-Mail" />
                     <input type="submit" name="submit" class="bigButton" value="Wiederherstellen" />
                 </form>
 
                 <form key="signUp" v-else id="signupForm" @submit.prevent="submitRegisterForm" accept-charset="utf-8">
-                    <h1>Registrieren</h1>
                     <input type="text" class="usernameInp" @input="removeRegisterErrors" placeholder="Benutzername" />
                     <input type="text" class="emailInp" @input="removeRegisterErrors" placeholder="E-Mail" />
                     <input type="password" class="passwordInp" @input="removeRegisterErrors" placeholder="Kennwort" />
@@ -29,6 +34,11 @@
                     <input type="submit" name="submit" class="bigButton" value="Registrieren" />
                 </form>
                 </transition>
+            </div>
+
+            <div class="additionalButtons clearfix">
+                <button id="recoveryButton" class="borderless" @click="changeMode(2)">Passwort vergessen?</button>
+                <button id="registerButton" class="borderless" @click="changeMode(1)">Noch nicht registriert?</button>
             </div>
 
             <transition name="slide-in">
@@ -94,24 +104,27 @@
 
     #outerWrapper {
         display: flex;
+        flex-direction: row;
         height: 100%;
-        margin: auto auto;
+        margin: auto 0;
+        background-color: #EBEBEB;
         background-image: url("~@/assets/login_background.jpg");
         background-repeat: no-repeat;
         background-size: cover;
+        justify-content: center;
     }
 
     #outerWrapper .formWrapper {
-        padding: 40px;
-        width: 250px;
-        height: 250px;
-        text-align: center;
+        padding: 60px 40px;
+        border-top: 3px solid white;
         color: white;
-        background-color: rgb(73, 73, 73);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        border-radius: 1.5mm;
+        width: 222px;
+        background: linear-gradient(to right,#FFCB00, #FFB02F);
+        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+        border-radius: 30px;
         transition: height 0.3s;
         position: relative;
+        margin-bottom: 10px;
         z-index: 200;
     }
 
@@ -122,59 +135,81 @@
     .borderless {
         display: block;
         margin: 0 auto;
+        display: inline-block;
         -webkit-appearance: none;
-        color: lightskyblue;
+        color: #00A4FF;
+        text-shadow: 0 0 3px white;
         background-color: transparent;
         font-size: 15px;
-        margin-bottom: 13px;
-        padding: 5px 20px;
+        padding: 5px 10px;
         border: none;
+        outline: none;
         border-radius: 5px;
         transition: background-color 0.25s;
         cursor: pointer;
     }
 
     .borderless:hover {
-        background-color: rgb(128, 128, 128);
+        background-color: white;
     }
 
-    #outerWrapper > div {
-        width: 330px;
+    .contentArea {
         height: 280px;
-        margin: auto auto;
+        margin: auto 0;
+        flex: 0;
         position: relative;
     }
 
-    form h1 {
-        font-family: Helvetica;
-        margin-top: 0;
-        margin-bottom: 20px;
-        font-weight: 400;
-        font-size: 25px;
+    h1 {
+        font-family: "Courir";
+        font-weight: 500;
+        font-size: 45px;
+        margin: 0;
+    }
+
+    div.headings {
+        margin: auto 80px auto 0;
     }
 
     form input[type="text"], form input[type="password"] {
-        width: calc(100% - 10px);
+        width: 210px;
         height: 20px;
-        margin-bottom: 10px;
-        border: 1px solid gray;
+        display: block;
+        margin-bottom: 25px;
+        border: 1px solid white;
         padding: 5px;
+        box-shadow: 0 0 16px #00000029;
+        border-radius: 6px;
         font-size: 12px;
-        color:  rgb(39, 39, 39) !important;
-        background-color: gray;
+        color:  lightgray !important;
+        background-color: white;
         transition: opacity .2s ease-in, border 0.2s;
-        border-radius: 0.75mm;
     }  
 
+    .additionalButtons {
+        white-space: nowrap;
+    }
+
+    .headingSeparator {
+        height: 2px;
+        background-color: black;
+        border-radius: 2px;
+        width: 250px;
+        margin: 15px 0;
+    }
 
     .bigButton {
-        width: 100%;
+        width: 130px;
         margin-top: 5px;
         height: 30px;
         border: none;
-        margin-bottom: 20px;
+        background-color: #00A4FF;
+        float: left;
+        box-shadow: 0 0 16px #00000029;
+        color: white;
         font-size: 14px;
-        border-radius: 0.75mm;
+        outline: none;
+        border-radius: 6px;
         transition: background-color .25s, color .25s;
     }
 
@@ -193,17 +228,6 @@
 
     form span:hover{
         cursor: pointer;
-    }
-
-    #logo{
-        width: 300px;
-        height: 60px;
-        position: absolute;
-        left: calc(50% - 150px);
-        top: 15%;
-        padding-bottom: 10px;
-        padding-top: 10px;
-        border: 1px solid rgb(255, 255, 255);
     }
 </style>
 
