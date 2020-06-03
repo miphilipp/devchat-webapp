@@ -92,7 +92,7 @@ class SocketConnection {
         }
 
         this.socket.onclose = (event: CloseEvent) => {
-            clearInterval(this.heartbeatTimer)
+            window.clearInterval(this.heartbeatTimer)
             console.log('Connection closed', event.code, event.reason)
             this.socket = undefined
 
@@ -124,7 +124,7 @@ class SocketConnection {
                     } else {
                         request.rejector(message.payload)
                     }
-                    clearTimeout(request.timer)
+                    window.clearTimeout(request.timer)
                 }
                 this.openRequests.delete(message.id)
                 return
@@ -181,7 +181,7 @@ class SocketConnection {
 
             try {
                 this.socket.send(JSON.stringify(message))
-                const timer = setTimeout(() => {
+                const timer = window.setTimeout(() => {
                     this.openRequests.delete(message.id)
                     reject({info: {code: 2002, message: 'timeout'}})
                 }, 5000)
