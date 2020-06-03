@@ -50,38 +50,6 @@ library.add(faCode)
 library.add(faSave)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-
-import 'prismjs'
-import 'prismjs/components/prism-python.js'
-import 'prismjs/components/prism-swift.js'
-import 'prismjs/components/prism-c.js'
-import 'prismjs/components/prism-cpp.js'
-import 'prismjs/components/prism-coffeescript.js'
-import 'prismjs/components/prism-csharp.js'
-import 'prismjs/components/prism-markup-templating.js'
-import 'prismjs/components/prism-php.js'
-import 'prismjs/components/prism-ruby.js'
-import 'prismjs/components/prism-rust.js'
-import 'prismjs/components/prism-java.js'
-import 'prismjs/components/prism-typescript.js'
-import 'prismjs/components/prism-bash.js'
-import 'prismjs/components/prism-css.js'
-import 'prismjs/components/prism-fsharp.js'
-import 'prismjs/components/prism-go.js'
-import 'prismjs/components/prism-groovy.js'
-import 'prismjs/components/prism-json.js'
-import 'prismjs/components/prism-kotlin.js'
-import 'prismjs/components/prism-markdown.js'
-import 'prismjs/components/prism-matlab.js'
-import 'prismjs/components/prism-objectivec.js'
-import 'prismjs/components/prism-perl.js'
-import 'prismjs/components/prism-yaml.js'
-import 'prismjs/components/prism-wasm.js'
-import 'prismjs/components/prism-sql.js'
-import 'prismjs/components/prism-graphql.js'
-
-
-import 'vue-prism-editor/dist/VuePrismEditor.css'
 import 'vue-select/dist/vue-select.css'
 
 Vue.use(SocketPlugin)
