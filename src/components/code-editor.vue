@@ -13,9 +13,6 @@
                 @input="titleChanged" 
                 v-model="title" 
                 placeholder="Titel eingeben" />
-            <button class="defaultButton liveToggle" v-if="!createNew" @click="toggleLiveCoding">
-                {{ liveButtonText }}
-            </button>
             <select 
                 v-if="languages.length > 0" 
                 @change="languageSelected"
@@ -26,6 +23,9 @@
                 <option disabled value="Blank">Auswählen...</option>
                 <option :value="l.name" v-for="(l, i) in languages" :key="i"> {{ l.name }}</option>
             </select>
+            <button class="defaultButton liveToggle" v-if="!createNew" @click="toggleLiveCoding">
+                {{ liveButtonText }}
+            </button>
         </div>  
         <prism-editor 
             @change="codeChanged" 
@@ -473,9 +473,10 @@
     }
 
     .codeTitleInput {
-        width: 350px;
+        flex: 1;
         height: 30px;
         padding-left: 10px;
+        margin-right: 25px;
         background: var(--mainBackgroundColor);
         border: solid 1px white;
         -webkit-appearance: none;
@@ -545,6 +546,7 @@
     }
 
     .editorConfig {
+        display: flex;
         padding: 15px 15px 0 15px;
     }
 
