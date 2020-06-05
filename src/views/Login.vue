@@ -6,7 +6,7 @@
             <h1>{{ formTitle }}</h1>
         </div>
         <div class="contentArea">
-            <div class="formWrapper">
+            <div class="formWrapper yellowBox">
                 <transition mode="out-in" name="switchOut" @enter="enterTransition">
                 <form 
                     key="signIn" 
@@ -132,12 +132,6 @@
     }
 
     #outerWrapper .formWrapper {
-        padding: 50px 40px;
-        border-top: 3px solid white;
-        color: white;
-        background: linear-gradient(to right,#FFCB00, #FFB02F);
-        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
-        border-radius: 30px;
         transition: height 0.3s;
         position: relative;
         margin-bottom: 10px;
@@ -198,25 +192,9 @@
 
     form input[type="text"], form input[type="password"] {
         width: 220px;
-        height: 30px;
         display: block;
         margin-bottom: 22px;
-        box-sizing: border-box;
-        border: 1px solid white;
-        padding: 5px;
-        box-shadow: 0 0 16px #00000029;
-        border-radius: 6px;
-        font-size: 12px;
-        color:  black !important;
-        background-color: white;
         transition: opacity .2s ease-in, border 0.2s, box-shadow .25s;
-    }  
-
-    form label {
-        color: #505050;
-        display: inline-block;
-        margin: 0 0 5px 5px;
-        font-size: 15px;
     }
 
     .headingSeparator {

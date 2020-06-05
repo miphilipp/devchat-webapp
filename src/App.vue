@@ -299,6 +299,37 @@ export default class App extends Vue {
     --mainBackgroundColor: #fffef3;
   }
 
+  .yellowBox {
+    padding: 50px 40px;
+    border-top: 3px solid white;
+    background: linear-gradient(to right,#FFCB00, #FFB02F);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 30px;
+  }
+
+  .yellowBox input[type="text"], .yellowBox input[type="password"] {
+    background-color: white;
+    border-radius: 6px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid white;
+    color: black !important;
+    padding: 5px;
+    box-shadow: 0 0 16px #00000029;
+    font-size: 12px;
+  }
+
+  .yellowBox label {
+    color: #505050;
+    display: inline-block;
+    margin: 0 0 5px 5px;
+    font-size: 15px;
+  }
+
+  .yellowBox input[type="text"]:focus, .yellowBox input[type="password"]:focus {
+    outline: 2px solid lightblue;
+  }
+
   .defaultToken {
     padding: 4px 8px;
     border-radius: 0.75mm;
@@ -345,10 +376,6 @@ export default class App extends Vue {
     top: 20px;
     right: 20px;
     z-index: 2000;
-  }
-
-  input[type="text"]:focus, input[type="password"]:focus {
-    outline: 2px solid lightblue;
   }
 
   .modalFadeIn-enter-active, .modalFadeIn-leave-active {
