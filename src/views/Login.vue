@@ -230,6 +230,28 @@
     form span:hover{
         cursor: pointer;
     }
+
+    @media (max-width: 750px) {
+        #outerWrapper {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contentArea {
+            margin: unset;
+            height: auto;
+        }
+
+        .borderless {
+            width: 100%;
+        }
+
+        div.headings {
+            margin: 0 auto;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+    }
 </style>
 
 <script lang="ts">
