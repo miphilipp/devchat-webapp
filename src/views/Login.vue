@@ -56,7 +56,7 @@
 
             <transition name="slide-in">
             <div :class="error ? 'error' : 'success'" v-if="showReqeustResultMessage" class="requestResultMessage">
-                <div>{{ message }}</div>
+                <div><span>{{ message }}</span></div>
             </div>
             </transition>
         </div>
@@ -90,10 +90,9 @@
 
     .requestResultMessage {
         transform: translateY(-70px);
-        width: 302px;
+        width: 300px;
         height: 100px;
         position: absolute;
-        display: table;
         top: 0;
         left: 0;
         z-index: 100;
@@ -103,8 +102,13 @@
     }
 
     .requestResultMessage > div {
-        display: table-cell;
-        vertical-align: middle;
+        height: 70px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .requestResultMessage > div > span {
+        margin: auto;
     }
 
     .requestResultMessage button {
@@ -155,7 +159,7 @@
         padding: 5px 10px;
         border: none;
         outline: none;
-        border-radius: 5px;
+        border-radius: 6px;
         transition: background-color 0.25s;
         cursor: pointer;
     }
@@ -186,11 +190,18 @@
         margin-bottom: 15px;
     }
 
+    form input[type="text"]:focus, form input[type="password"]:focus {
+        outline: none;
+        box-shadow: 0 0 5px #00000029;
+        border-color: #23e1ff;
+    }
+
     form input[type="text"], form input[type="password"] {
-        width: 210px;
-        height: 20px;
+        width: 220px;
+        height: 30px;
         display: block;
         margin-bottom: 22px;
+        box-sizing: border-box;
         border: 1px solid white;
         padding: 5px;
         box-shadow: 0 0 16px #00000029;
@@ -198,7 +209,7 @@
         font-size: 12px;
         color:  black !important;
         background-color: white;
-        transition: opacity .2s ease-in, border 0.2s;
+        transition: opacity .2s ease-in, border 0.2s, box-shadow .25s;
     }  
 
     form label {
@@ -296,7 +307,7 @@ export default class Login extends Vue {
             await fetchJson('/sendpasswordreset', { email }, 'POST', false)
             this.showMessageBox('Überprüfen Sie ihr Mail-Postfach.', false)
         } catch (error) {
-            this.showMessageBox(Errors.login(error), true, 10000)
+            this.showMessageBox(Errors.login(error), true, 6000)
         }
     }
 
@@ -330,7 +341,7 @@ export default class Login extends Vue {
             await login(username, password)
             this.$router.push('/')
         } catch (error) {
-            this.showMessageBox(Errors.login(error), true, 8000)
+            this.showMessageBox(Errors.login(error), true, 6000)
         }
     }
 
@@ -399,7 +410,7 @@ export default class Login extends Vue {
             this.mode = FormMode.SignIn
             this.showMessageBox('Registrierung erfolgreich', false, 3000)
         } catch (error) {
-            this.showMessageBox(Errors.login(error), true, 10000)
+            this.showMessageBox(Errors.login(error), true, 6000)
         }
     }
 
