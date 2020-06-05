@@ -184,12 +184,6 @@
         margin-bottom: 15px;
     }
 
-    form input[type="text"]:focus, form input[type="password"]:focus {
-        outline: none;
-        box-shadow: 0 0 5px #00000029;
-        border-color: #23e1ff;
-    }
-
     form input[type="text"], form input[type="password"] {
         width: 220px;
         display: block;

@@ -319,15 +319,17 @@ export default class App extends Vue {
     font-size: 12px;
   }
 
+  .yellowBox input[type="text"]:focus, .yellowBox input[type="password"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px #00000029;
+    border-color: #23e1ff;
+  }
+
   .yellowBox label {
     color: #505050;
     display: inline-block;
     margin: 0 0 5px 5px;
     font-size: 15px;
-  }
-
-  .yellowBox input[type="text"]:focus, .yellowBox input[type="password"]:focus {
-    outline: 2px solid lightblue;
   }
 
   .defaultToken {
