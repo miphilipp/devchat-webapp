@@ -5,7 +5,6 @@
                 <button class="defaultButton" @click="joinLiveCoding">Zuschauen</button>
         </div>
         <div class="editorConfig">
-            <!-- <TitleInput  class="codeTitleInput" :editable="isReadonly" placeholder="Titel eingeben" v-model="title" ></TitleInput> -->
             <input 
                 :disabled="isReadonly" 
                 type="text" 
@@ -81,7 +80,6 @@
     import { startCodingSession, sendLiveCodingUpdate, stopCodingSession } from '../model/coding'
     import PrismEditor from 'vue-prism-editor'
     import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-    //import * as workerPath from "file-loader?name=[name].js!../diffWorker"
     import { DiffMatchPatch } from 'diff-match-patch-typescript'
     import { Conversation } from '../model/conversation'
     import TitleInput from './titleInput.vue'
