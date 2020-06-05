@@ -304,6 +304,10 @@ export default class App extends Vue {
     color: white;
   }
 
+  video {
+    outline: none;
+  }
+
   input[type="text"] {
     border: 1px solid lightgray;
   }
