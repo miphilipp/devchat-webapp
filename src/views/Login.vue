@@ -1,10 +1,14 @@
 <template>
 	<div id="outerWrapper">
-        <div class="headings">
+        <div class="headings" ref="headings">
             <h1>DevChat</h1>
             <div class="headingSeparator"></div>
-            <h1>{{ formTitle }}</h1>
+
+            <transition mode="out-in" name="fade" @enter="enterFadeAnimation">
+            <h1 :key="formTitle">{{ formTitle }}</h1>
+             </transition>
         </div>
+        
         <div class="contentArea">
             <div class="formWrapper yellowBox">
                 <transition mode="out-in" name="switchOut" @enter="enterTransition">
@@ -24,15 +28,15 @@
 
                 <form key="recover" v-else-if="mode === 2" id="recoveryForm" @submit.prevent="submitPasswordReset" accept-charset="utf-8">
                     <label for="recover_mail">E-Mail</label>
-                    <input type="text" class="emailInp" @input="removeRecoveryErrors" id="recover_mail" />
+                    <input type="text" class="emailInp" @input="removeRecoveryErrors" id="recover_mail" autocomplete="off" />
                     <input type="submit" name="submit" class="bigButton" value="Wiederherstellen" />
                 </form>
 
                 <form key="signUp" v-else id="signupForm" @submit.prevent="submitRegisterForm" accept-charset="utf-8">
                     <label for="signup_name">Benutzername</label>
-                    <input type="text" class="usernameInp" @input="removeRegisterErrors" id="signup_name" />
+                    <input type="text" class="usernameInp" @input="removeRegisterErrors" id="signup_name" autocomplete="off" />
                     <label for="recover_mail">E-Mail</label>
-                    <input type="text" class="emailInp" @input="removeRegisterErrors" id="signup_mail" />
+                    <input type="text" class="emailInp" @input="removeRegisterErrors" id="signup_mail" autocomplete="off" />
                     <label for="signup_password">Kennwort</label>
                     <input type="password" class="passwordInp" @input="removeRegisterErrors" id="signup_password" />
                     <label for="signup_password_check">Kennwort erneut eingeben</label>
@@ -77,6 +81,14 @@
     .requestResultMessage.slide-in-enter, .requestResultMessage.slide-in-leave-to {
         transform: translateY(0px);
     }
+
+    .fade-enter-active, .fade-leave-active {
+		transition: opacity .4s;
+	}
+	
+	.fade-enter, .fade-leave-to {
+		opacity: 0;
+	}
 
     .error {
         background-color: FireBrick;
@@ -133,6 +145,7 @@
 
     #outerWrapper .formWrapper {
         transition: height 0.3s;
+        height: 183px;
         position: relative;
         margin-bottom: 10px;
         z-index: 200;
@@ -177,6 +190,8 @@
     }
 
     div.headings {
+        width: 250px;
+        transition: width 0.3s;
         margin: auto 80px auto 0;
     }
 
@@ -242,6 +257,11 @@
             height: auto;
         }
 
+        .headingSeparator {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .borderless {
             width: 100%;
         }
@@ -284,7 +304,18 @@ export default class Login extends Vue {
         } else if (this.mode === FormMode.Register) {
             el.style.height = '300px'
         } else {
-            el.style.height = '195px'
+            el.style.height = '183px'
+        }
+    }
+
+    enterFadeAnimation() {
+        const headings = this.$refs.headings as HTMLElement
+        if (this.mode === FormMode.Recover) {
+            headings.style.width = '353px'
+        } else if (this.mode === FormMode.Register) {
+            headings.style.width = '250px'
+        } else {
+            headings.style.width = '250px'
         }
     }
 
