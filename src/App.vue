@@ -304,7 +304,7 @@ export default class App extends Vue {
     color: white;
   }
 
-  video {
+  video, select {
     outline: none;
   }
 
