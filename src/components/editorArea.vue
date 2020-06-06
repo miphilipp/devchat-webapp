@@ -114,26 +114,26 @@
 
     .messageSelectionList ul {
         list-style-type: none;
-        padding: 0 5px;
+        padding: 0;
         margin: 10px 0 0 0;
     }
 
     ul li.active {
-        background-color: rgba(255, 255, 255, 0.74);
+            background: linear-gradient(to right, var(--mainBackgroundColor), hsla(0,0%,100%,.74));
     }
 
     .messageSelectionList li {
-        padding: 5px 15px;
+        padding: 9px 15px;
         transition: background-color 0.3s;
         cursor: pointer;
-        border-radius: 5px;
+        border-bottom: 1px solid #d3e4fb;
         color: #313131;
     }
 
     .messageSelectionList h3 {
         padding: 0 20px 10px;
         margin: 15px 0 0 0;
-        border-bottom: 1px solid white;
+        border-bottom: 2px solid white;
         text-shadow: 1px 1px 3px rgba(41, 41, 41, 0.61);
         color: white;
     }
