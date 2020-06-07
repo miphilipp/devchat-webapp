@@ -177,14 +177,14 @@
 	}
 
 	.leftArea {
-		grid-area: "left";
+		grid-area: left;
 		height: 100%;
 		display: flex;
 		align-items: flex-start;
 	}
 
 	.rightArea {
-		grid-area: "right";
+		grid-area: right;
 		position: relative;
 	}
 
