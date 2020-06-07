@@ -246,6 +246,46 @@
         cursor: pointer;
     }
 
+    @media (prefers-color-scheme: dark) {
+      .headings {
+          color: white;
+      }
+
+      .bigButton {
+          background-color: #1a5779;
+      }
+
+      .bigButton:hover {
+          background-color: #29406a;
+      }
+
+      #outerWrapper .formWrapper {
+          background-image: linear-gradient(90deg,#d99f16,#c17514)
+      }
+
+      .borderless {
+          color: #73b7dd;
+          text-shadow: 0 0 3px #000;
+      }
+
+      .borderless:hover {
+          background-color: #3d475d;
+      }
+
+      .headingSeparator {
+          background-color: white;
+      }
+
+      form label {
+          color: white;
+      }
+
+      #outerWrapper {
+          background-color: var(--mainBackgroundColor);
+          background-blend-mode: color-burn;
+      }
+    }
+
     @media (max-width: 750px) {
         #outerWrapper {
             flex-direction: column;
