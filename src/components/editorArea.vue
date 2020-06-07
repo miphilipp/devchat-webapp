@@ -119,7 +119,7 @@
     }
 
     ul li.active {
-            background: linear-gradient(to right, var(--mainBackgroundColor), hsla(0,0%,100%,.74));
+        background: linear-gradient(to right, var(--mainBackgroundColor), hsla(0,0%,100%,.74));
     }
 
     .messageSelectionList li {
@@ -143,9 +143,18 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      .messageSelectionList {
-        border-top: 2px solid #d6d6d6;
-        background: linear-gradient(30deg, #798d7c, #88909e);
-      }
+        .messageSelectionList li {
+            border-color: #6f8074;
+        }
+
+        ul li.active {
+            background: hsla(0,0%,100%,.25);
+            color: white;
+        }
+
+        .messageSelectionList {
+            border-top: 2px solid #d6d6d6;
+            background: linear-gradient(30deg, #798d7c, #88909e);
+        }
     }
 </style>

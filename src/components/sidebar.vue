@@ -320,6 +320,7 @@
         }
 
       ul li {
+          color: #e3e3e3;
           background-color: #262c37;
           --placeholderColor:  rgb(59, 59, 59);
       }
