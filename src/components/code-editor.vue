@@ -26,13 +26,12 @@
                 {{ liveButtonText }}
             </button>
         </div>  
-        <prism-editor 
-            @change="codeChanged" 
+        <codemirror 
+            ref="cmEditor"
+            class="codeEditor"
+            @inputRead="codeChanged" 
             v-model="text" 
-            class="mainEditor"
-            :readonly="isReadonly"
-            :language="languageKey" 
-            lineNumbers />
+            :options="editorOptions"/>
 
         <div class="lower-controls">
             <transition-group 
@@ -78,17 +77,46 @@
     import { Message, CodeMessage, MessageType, reloadMessage, makeMessage } from '../model/message'
     import { RESTCommand, SocketRestMethod, SocketMessage } from '../socket'
     import { startCodingSession, sendLiveCodingUpdate, stopCodingSession } from '../model/coding'
-    import PrismEditor from 'vue-prism-editor'
+    import { codemirror } from 'vue-codemirror'
     import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
     import { DiffMatchPatch } from 'diff-match-patch-typescript'
     import { Conversation } from '../model/conversation'
     import TitleInput from './titleInput.vue'
     import Errors from '../errors'
 
+    import 'codemirror/lib/codemirror.css'
+
+    // language
+    import 'codemirror/mode/python/python.js'
+    import 'codemirror/mode/swift/swift.js'
+    import 'codemirror/mode/clike/clike.js'
+    import 'codemirror/mode/coffeescript/coffeescript.js'
+    import 'codemirror/mode/markdown/markdown.js'
+    import 'codemirror/mode/php/php.js'
+    import 'codemirror/mode/ruby/ruby.js'
+    import 'codemirror/mode/rust/rust.js'
+    import 'codemirror/mode/shell/shell.js'
+    import 'codemirror/mode/groovy/groovy.js'
+    import 'codemirror/mode/css/css.js'
+    import 'codemirror/mode/go/go.js'
+    import 'codemirror/mode/sql/sql.js'
+    import 'codemirror/mode/cmake/cmake.js'
+    import 'codemirror/mode/vue/vue.js'
+    import 'codemirror/mode/perl/perl.js'
+    import 'codemirror/mode/octave/octave.js'
+    import 'codemirror/mode/xml/xml.js'
+    import 'codemirror/mode/dockerfile/dockerfile.js'
+    import 'codemirror/mode/yaml/yaml.js'
+    import 'codemirror-graphql/mode'
+
+    import 'codemirror/addon/edit/closetag.js'
+    import 'codemirror/addon/edit/matchbrackets.js'
+    import 'codemirror/addon/edit/closebrackets.js'
+
     @Component({
         name: 'codeEditor',
         components: {
-            PrismEditor,
+            codemirror,
             TitleInput,
         },
     })
@@ -102,7 +130,7 @@
         hasChanges = false
         text = ''
         title = ''
-        languageKey = 'js'
+        editorOptions = this.makeOptions('JavaScript', false)
 
         async created () {
             this.$socket.subscribe(new RESTCommand('livesession/code', SocketRestMethod.Post), this.startLiveCodingFromOutside)
@@ -139,15 +167,32 @@
         }
 
         @Watch('message')
-        onMessageChanged(value: CodeMessage, oldValue: CodeMessage) {
+        async onMessageChanged(value: CodeMessage, oldValue: CodeMessage) {
             if (value === undefined) {
                 this.newCodeMessage()
                 return
             }
 
-            this.hasChanges = false
             this.createNew = false
             this.setState(value.title, value.code, value.language)
+            await this.$nextTick()
+            this.codemirror.clearHistory()
+            this.hasChanges = false
+        }
+
+        makeOptions(languageName: string, readOnly: boolean) {
+            return {
+                mode: this.getlanguageKey(languageName),
+                autoCloseBrackets: true,
+                lineNumbers: true,
+                autoCloseTags: true,
+                line: true,
+                matchBrackets: true,
+                lineWrapping: true,
+                readOnly: readOnly,
+                theme: 'default lucario',
+                tabSize: 4,
+            }
         }
 
         async languageSelected() {
@@ -157,7 +202,7 @@
                 return
             }
 
-            this.languageKey = this.getlanguageKey(l.name)
+            this.editorOptions = this.makeOptions(l.name, this.isReadonly)
 
             if (this.newMessage !== null && this.createNew) {
                 this.newMessage.language = l.name
@@ -185,6 +230,7 @@
 
         toggleLiveSessionFromOutside(messageId: number, source: number, newOwner: number) {
             this.$store.commit('setLockedState', {newOwner, messageId, conversationId: source})
+            this.editorOptions = this.makeOptions(this.selectKey, this.isReadonly)
         }
 
         async refreshMessage() {
@@ -206,7 +252,7 @@
             this.text = text
             this.title = title
             this.selectKey = selectKey
-            this.languageKey = this.getlanguageKey(selectKey)
+            this.editorOptions = this.makeOptions(selectKey, this.isReadonly)
         }
 
         newCodeMessage() {
@@ -230,8 +276,8 @@
                 this.newMessage.author = this.$store.getters.username
                 this.message = this.newMessage
 
-                const currentCId = this.$store.getters.selectedConversation.id
                 try {
+                    const currentCId = this.$store.getters.selectedConversation.id
                     const res = await this.message.send(this.$socket, currentCId)
                     this.$emit('send-message', res, currentCId)
                     this.createNew = false
@@ -298,6 +344,10 @@
             return this.message === undefined || this.codingSession.id !== this.message.id
         }
 
+        get codemirror(): CodeMirror.Editor {
+            return (this.$refs.cmEditor as any).cminstance
+        }
+
         joinLiveCoding() {
             this.$emit('select', this.codingSession.id)
         }
@@ -319,7 +369,6 @@
                     const text = Errors.toggleLiveCodeing(error)
                     this.$eventBus.$emit('show-notification', {error: true, text})
                 }
-                return
             } else {
                 try {
                     const res = await startCodingSession(this.$socket, conversationId, this.message.id, messageType)
@@ -333,6 +382,7 @@
                     this.$eventBus.$emit('show-notification', {error: true, text})
                 }
             }
+            this.editorOptions = this.makeOptions(this.selectKey, this.isReadonly)
         }
 
         async titleChanged(event: Event) {
@@ -382,7 +432,7 @@
             })
         }
 
-        async codeChanged() {
+        async codeChanged(inst: any, changes: any) {
             if (this.newMessage !== null && this.createNew) {
                 this.newMessage.code = this.text
             } else if (this.codingSession !== undefined && this.message !== undefined) {
@@ -405,33 +455,36 @@
 
         getlanguageKey(languageName: string): string {
             switch (languageName) {
-                case 'CSS':         return 'css'
-                case 'C# (.Net Core)': return 'csharp'
-                case 'C++':         return 'cpp' 
-                case 'C':           return 'c'
-                case 'JavaScript':  return 'js'
-                case 'Go':          return 'go'
-                case 'Swift':       return 'swift'
-                case 'Rust':        return 'rust'
-                case 'Python':      return 'python'
-                case 'PHP':         return 'php'
-                case 'Ruby':        return 'ruby'
-                case 'Perl':        return 'perl'
-                case 'R':           return 'r'
-                case 'Java':        return 'css'
-                case 'YAML':        return 'yaml'
+                case 'CSS':         return 'text/css'
+                case 'C# (.Net Core)': return 'text/x-csharp'
+                case 'C++':         return 'text/x-c++src' 
+                case 'C':           return 'text/x-csrc'
+                case 'JavaScript':  return 'text/javascript'
+                case 'Go':          return 'text/x-go'
+                case 'Swift':       return 'text/x-swift'
+                case 'Rust':        return 'text/x-rust'
+                case 'Python':      return 'text/x-python'
+                case 'PHP':         return 'text/x-php'
+                case 'Ruby':        return 'text/x-ruby'
+                case 'Perl':        return 'text/x-perl'
+                case 'R':           return 'text/x-r'
+                case 'Java':        return 'text/x-java'
+                case 'YAML':        return 'text/x-yaml'
                 case 'GraphQL':     return 'graphql'
-                case 'F#':          return 'fsharp'
-                case 'Objective-C': return 'objectivec'
-                case 'WebAssembly': return 'wasm'
-                case 'SQL':         return 'sql'
-                case 'MatLab':      return 'matlab'
-                case 'Markdown':    return 'markdown'
-                case 'Kotlin':      return 'kotlin'
-                case 'Bash':        return 'bash'
-                case 'XML':         return 'html'
-                case 'HTML':        return 'html'
-                default: return 'js'
+                case 'F#':          return 'text/x-fsharp'
+                case 'Objective-C': return 'text/x-objectivec'
+                case 'WebAssembly': return 'text/wasm'
+                case 'SQL':         return 'text/x-sql'
+                case 'MatLab':      return 'text/x-octave'
+                case 'Markdown':    return 'text/x-markdown'
+                case 'Kotlin':      return 'text/x-kotlin'
+                case 'Bash':        return 'text/x-sh'
+                case 'XML':         return 'application/xml'
+                case 'HTML':        return 'text/html'
+                case 'PL/SQL':      return 'text/x-pgsql'
+                case 'JSON':        return 'application/json'
+                case 'TypeScript':  return 'text/typescript'
+                default:            return 'text/javascript'
             }
         }
     }
@@ -440,23 +493,24 @@
 </script>
 
 <style>
-    div.prism-editor__line-numbers {
-        background-color: var(--mainBackgroundColor) !important;
-        min-height: unset !important;
-        overflow: unset;
+    .CodeMirror, .cm-s-lucario.CodeMirror {
+        background-color: unset !important;
     }
 
-    pre.prism-editor__code {
-        background-color: var(--mainBackgroundColor) !important;
-        box-shadow: none !important;
-        border: none !important;
+    .CodeMirror-gutters, .cm-s-lucario .CodeMirror-gutters {
+        border: none;
+        background: unset !important;
     }
+
+    .CodeMirror {
+        height: auto;
+    }
+
 </style>
 
 <style scoped>
 
-    @import url("./../../node_modules/prismjs/themes/prism.css") (prefers-color-scheme: light), (prefers-color-scheme: no-preference);
-    @import url("./../../node_modules/prismjs/themes/prism-dark.css") (prefers-color-scheme: dark);
+    @import url("./../../node_modules/codemirror/theme/lucario.css") (prefers-color-scheme: dark);
 
 	.switchOutButtons-enter, .switchOutButtons-leave-to {
 		opacity: 0;
@@ -465,9 +519,9 @@
 		position: absolute;
 	}
 
-    .mainEditor {
-        font-size: 13px;
-        height: 80%;
+    .codeEditor {
+        flex: 1;
+        overflow: scroll;
     }
 
     .codeTitleInput {
@@ -508,6 +562,7 @@
         right: 20px;
         width: 40px;
         height: 40px;
+        z-index: 100;
         box-shadow: 0 2px 3px rgba(0,0,0,0.2), inset 0px 0px 0px 1px lightgrey;
         background-color: white;
         border-radius: 20px;
@@ -541,6 +596,8 @@
     .wrapper {
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 
     .editorConfig {
