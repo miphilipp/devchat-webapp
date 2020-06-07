@@ -1,5 +1,5 @@
 <template>
-    <div class="member-wrapper">
+    <div class="member-wrapper" @click.self="hideActionsVisiblity">
         <img 
             :style='{"--indicatorColor": colorIndexToColor(member.colorIndex)}' 
             class="avatar" 
@@ -68,7 +68,7 @@ class MemberCell extends Vue {
     }
 
     get adminButtonText(): string {
-        return this.member.isAdmin ? "Rechte entziehen" : "Zum Admin ernennen"
+        return this.member.isAdmin ? 'Rechte entziehen' : 'Zum Admin ernennen'
     }
 
     async setAdminStatus() {
@@ -118,8 +118,8 @@ export default MemberCell
         border-radius: 5px;
         display: flex;
         flex-direction: column;
-        right: -158px;
-        width: 140px;
+        right: -165px;
+        width: 150px;
         top: -17px;
         user-select: none;
     }
