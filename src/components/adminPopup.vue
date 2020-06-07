@@ -9,7 +9,7 @@
                 Teilnehmer hinzufügen
             </li>
             <li v-for="m in conversationMembers" :key="m.id" @click="chooseMember(m.id)">
-                <MemberCell :member="m" :canDisplayDetails="!wantsToLeave && $store.getters.amIAdmin" :avatarLink="avatarLink"></MemberCell>
+                <MemberCell :member="m" :canDisplayDetails="!wantsToLeave && $store.getters.amIAdmin" :avatarLink="avatarLink" />
             </li>
         </ul>
         <button 
@@ -20,7 +20,7 @@
         </button>
         <button class="defaultButton abortButton" v-if="wantsToLeave" @click="abortLeaving">Abbrechen</button>
         <p class="leavingHint" v-if="wantsToLeave">
-            Sie sind der einzige Administrator. Wählen Sie bitte einen Nachfolger um die Unterhaltung zu verlassen.
+            Sie sind der einzige Administrator. Wählen Sie bitte einen Nachfolger, um die Unterhaltung zu verlassen.
         </p>
         <button class="deleteButton defaultButton" v-if="$store.getters.amIAdmin && !wantsToLeave" @click="clickDeleteConversation">
             Unterhaltung löschen
@@ -35,7 +35,7 @@ import { Invitation, revokeInvitation, postInvitation } from '../model/invitatio
 import { User, UserInConversation } from '../model/user'
 import { RESTCommand, SocketRestMethod } from '../socket'
 import Errors from '../errors'
-import MemberCell from './member.vue';
+import MemberCell from './member.vue'
 
 @Component({
     components: {
@@ -58,7 +58,7 @@ class AdminPopup extends Vue {
         this.repoURL = this.$store.getters.selectedConversation.repoURL
         this.$eventBus.$on('hide-user-selection', this.hideUserSelection)
         this.$eventBus.$on('hide-prompt', this.confirm)
-        this.avatarLink = `/media/user/##user##/avatar`
+        this.avatarLink = '/media/user/##user##/avatar'
     }
 
     async hideUserSelection(users: User[]) {
@@ -90,12 +90,12 @@ class AdminPopup extends Vue {
     }
 
     async renameConversation() {
-        const currentID = this.$store.getters.selectedConversation.id
         try {
             const patchData = {
                 title: this.conversationTitle,
                 repoUrl: this.repoURL,
             }
+            const currentID = this.$store.getters.selectedConversation.id
             const res = await patchConversation(currentID, patchData)
         } catch (error) {
             const text = Errors.patchConversation(error)
@@ -190,6 +190,7 @@ export default AdminPopup
 
     .leavingHint {
         font-size: 15px;
+        line-height: 1.4;
     }
 
     .abortButton {
