@@ -521,7 +521,8 @@
 
     .codeEditor {
         flex: 1;
-        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .codeTitleInput {
@@ -602,7 +603,8 @@
 
     .editorConfig {
         display: flex;
-        padding: 15px 15px 0 15px;
+        padding: 15px 0 0 2px;
+        margin-bottom: 10px;
     }
 
     .editorConfig select {
