@@ -549,7 +549,7 @@
     }
 
     .editorConfig select {
-        height: 23px;
+        height: 26px;
     }
 
     .editorConfig button {
