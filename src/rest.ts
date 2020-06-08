@@ -1,4 +1,4 @@
-function request(
+async function request(
     location: string,
     method: string,
     useApi: boolean,
