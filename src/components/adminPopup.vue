@@ -138,8 +138,8 @@ class AdminPopup extends Vue {
                     await deleteConversation(currentID)
                 } else {
                     await leaveConversation(currentID, ownId, this.chosenMember)
-                    this.$store.dispatch('deleteConversation', currentID)
                 }
+                this.$store.dispatch('deleteConversation', currentID)
             } catch (error) {
                 this.$eventBus.$emit('show-notification', {error: true, text: error.info})
             }
