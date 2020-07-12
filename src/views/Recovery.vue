@@ -1,19 +1,21 @@
 <template>
 	<div id="outerWrapper">
+        <h1>Kennwort neu festlegen</h1>
         <div>
-            <div class="formWrapper">
-                <form key="reset" id="signupForm" @submit="submitResetForm" accept-charset="utf-8">
-                    <h1>Passwort neu festlegen</h1>
-                    <input type="password" class="passwordInp" @input="removeResetErrors" placeholder="Kennwort" />
-                    <input type="password" class="retypeInp" @input="removeResetErrors" placeholder="Kennwort erneut eingeben" />
-                    <input type="submit" name="submit" class="bigButton" value="Abschicken" />
-                </form>
-            </div>
+            <form key="reset" class="yellowBox" id="recoverForm" @submit="submitResetForm" accept-charset="utf-8">
+                <label for="recovery_password">Kennwort</label>
+                <input type="password" id="recovery_password" @input="removeResetErrors" />
+                <label for="recovery_retype_password">Kennwort erneut eingeben</label>
+                <input type="password" id="recovery_retype_password" @input="removeResetErrors" />
+                <input type="submit" name="submit" class="bigButton" value="Abschicken" />
+            </form>
             
             <transition name="slideIn">
             <div :class="error ? 'error' : 'success'" v-if="showReqeustResultMessage" class="requestResultMessage">
-                <div>{{ message }}</div>
-                <router-link v-if="showLink" to="/login">Zum Login >></router-link>
+                <div>
+                    <div>{{ message }}</div>
+                    <router-link v-if="showLink" to="/login">Zum Login >></router-link>
+                </div>
             </div>
             </transition>
         </div>
@@ -38,28 +40,28 @@
         color: black;
     }
 
-    input::placeholder {
-        color: darkgray;
-    }
-
     .requestResultMessage {
         transform: translateY(75px);
-        width: 290px;
+        width: 270px;
         padding: 0 20px;
-        height: 80px;
+        height: 110px;
         position: absolute;
-        display: table;
         bottom: 0;
         left: 0;
         z-index: 100;
-        border-bottom-left-radius: 1.5mm;
-        border-bottom-right-radius: 1.5mm;
-        text-align: center;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
     }
 
     .requestResultMessage > div {
-        display: table-cell;
-        vertical-align: middle;
+        height: 75px;
+        display: flex;
+        position: absolute;
+        bottom: 0;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        width: 270px;
     }
 
     form input.error {
@@ -68,81 +70,56 @@
 
     #outerWrapper {
         display: flex;
+        justify-content: center;
+        flex-direction: column;
         height: 100%;
-        margin: auto auto;
+        background-color: #EBEBEB;
         background-image: url("~@/assets/login_background.jpg");
         background-repeat: no-repeat;
         background-size: cover;
     }
 
-    #outerWrapper .formWrapper {
-        padding: 40px;
-        width: 250px;
-        height: 200px;
-        text-align: center;
-        color: white;
-        background-color: rgb(73, 73, 73);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        border-radius: 1.5mm;
+    #recoverForm {
+        width: 230px;
         position: relative;    
         z-index: 200;   
     }
 
     #outerWrapper > div {
-        width: 330px;
         height: 280px;
-        margin: auto auto;
+        margin: 0 auto;
         position: relative;
         z-index: 200;
     }
 
-    form h1 {
-        font-family: Helvetica;
-        margin-top: 0;
-        margin-bottom: 20px;
-        font-weight: 400;
-        font-size: 25px;
+    h1 {
+        font-family: "Contrail One", sans-serif;
+        margin: 0 auto;
+        margin-bottom: 50px;
+        font-size: 35px;
     }
 
     form input[type="text"], form input[type="password"] {
-        width: calc(100% - 10px);
-        height: 20px;
-        margin-bottom: 10px;
-        border: 1px solid gray;
-        padding: 5px;
-        font-size: 12px;
-        color:  rgb(39, 39, 39) !important;
-        background-color: gray;
+        width: 100%;
+        margin-bottom: 20px;
         transition: opacity .2s ease-in, border 0.2s;
-        border-radius: 0.75mm;
-    }  
-
+    }
 
     .bigButton {
-        width: 100%;
         margin-top: 5px;
-        height: 30px;
         border: none;
-        margin-bottom: 20px;
+        background-color: #00A4FF;
+        box-shadow: 0 0 16px #00000029;
+        color: white;
         font-size: 14px;
-        border-radius: 0.75mm;
+        border-radius: 6px;
+        padding: 7px 15px;
         transition: background-color .25s, color .25s;
     }
 
     .bigButton:hover {
         background-color: rgb(66, 126, 238);
         color: white;
-        cursor: pointer;
-    }
-
-    form span{
-        font-size: 14px;
-        top: 20px;
-        font-family: Arial, Helvetica, sans-serif;
-
-    }
-
-    form span:hover{
         cursor: pointer;
     }
 </style>
@@ -162,16 +139,14 @@ export default class Recovery extends Vue {
     showLink = false
 
     removeResetErrors() {
-        const passwordEl = document.querySelector('#signupForm .passwordInp') as HTMLInputElement
-        const retypeEl = document.querySelector('#signupForm .retypeInp') as HTMLInputElement
-        passwordEl.classList.remove('error')
-        retypeEl.classList.remove('error')
+        document.querySelector('#recovery_password')!.classList.remove('error')
+        document.querySelector('#recovery_retype_password')!.classList.remove('error')
     }
 
     async submitResetForm(event: Event) {
         event.preventDefault()
-        const passwordEl = document.querySelector('#signupForm .passwordInp') as HTMLInputElement
-        const retypeEl = document.querySelector('#signupForm .retypeInp') as HTMLInputElement
+        const passwordEl = document.querySelector('#recovery_password') as HTMLInputElement
+        const retypeEl = document.querySelector('#recovery_retype_password') as HTMLInputElement
         const password = passwordEl.value
         const retypedPassword = retypeEl.value
 
@@ -215,9 +190,9 @@ export default class Recovery extends Vue {
         this.showReqeustResultMessage = true
         this.error = error
         this.message = message
-        this.showLink = true
+        this.showLink = showLink
         if (autoHideTime !== 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.showReqeustResultMessage = false
             }, autoHideTime)
         }

@@ -1,11 +1,11 @@
 <template>
 	<div id="outerWrapper">
-        <div class="message">
+        <div class="message yellowBox">
             <h3>{{ text }}</h3>
             <div v-if="!error" class="checkmark">
                 <font-awesome-icon icon="check"></font-awesome-icon>
             </div>
-            <router-link v-if="!error" class="borderless" to="/login">Zum Login ></router-link>
+            <router-link v-if="!error" class="borderless" to="/login">Zum Login</router-link>
         </div>
 	</div>
 </template>
@@ -21,11 +21,12 @@
     }
 
     .checkmark {
-        border: 3px solid lightgreen;
+        border: 3px solid #118c37;
         height: 60px;
         width: 60px;
-        border-radius: 30px;
+        border-radius: 33px;
         margin: 0 auto;
+        margin-top: 30px;
         display: flex;
     }
 
@@ -44,34 +45,33 @@
     }
 
     .borderless:hover {
-        background-color: rgb(128, 128, 128);
+        background-color: rgba(255, 255, 255, 0.404);
     }
 
     h3 {
-        margin-top: 0;
+        margin: 0;
     }
 
     .message a {
         margin-top: 20px;
+        color: black;
         text-decoration: none;
+        display: inline-block;
+        padding: 7px 15px;
     }
 
     .checkmark svg {
         margin: auto;
         height: 30px;
         width: 30px;
-        color: lightgreen;
+        color: #118c37;
     }
 
     .message {
-        padding: 40px;
         width: 250px;
         text-align: center;
         margin: auto auto;
-        color: white;
-        background-color: rgb(73, 73, 73);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        border-radius: 1.5mm;
+        color: black;
         position: relative;    
         z-index: 200;  
     }
