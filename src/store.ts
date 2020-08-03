@@ -128,8 +128,8 @@ class ChatModule extends VuexModule {
       break
     case MessageType.Code:
       const codeMessage = message as CodeMessage
-      codeMessage.title = data.message.title
-      codeMessage.language = data.message.language
+      codeMessage.title = data.message.title === '' ? codeMessage.title : data.message.title
+      codeMessage.language = data.message.language === '' ? codeMessage.language : data.message.language
       codeMessage.code = data.message.code
       break
     case MessageType.Media:

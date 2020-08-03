@@ -29,7 +29,7 @@
         <codemirror 
             ref="cmEditor"
             class="codeEditor"
-            @inputRead="codeChanged" 
+            @changes="codeChanged" 
             v-model="text" 
             :options="editorOptions"/>
 
@@ -409,14 +409,17 @@
         }
 
         liveCodingUpdateCode(data: any, source: number) {
+            const message = this.$store.getters.selectedConversation.messages.find((m: CodeMessage) => {
+                return m.id === data.messageId && m.type === MessageType.Code
+            })
+            if (message === undefined) return
+
             const api = new DiffMatchPatch()
             const patches = api.patch_fromText(data.patch)
-            const result = api.patch_apply(patches, this.message.code)
-            const newTitle =  data.title === '' ? this.title : data.title
-            const newLanguage = data.language === '' ? this.selectKey : data.language
-            this.mutateMessageInStore(data.messageId, source, newTitle, newLanguage, result[0])
+            const result = api.patch_apply(patches, message.code)
+            this.mutateMessageInStore(data.messageId, source, data.title, data.language, result[0])
             if (this.message.id === this.codingSession.id && this.createNew === false) {
-                this.setState(newTitle, result[0], newLanguage)
+                this.setState(message.title, result[0], message.language)
             }
         }
 
@@ -432,10 +435,12 @@
             })
         }
 
-        async codeChanged(inst: any, changes: any) {
+        async codeChanged(inst: any, changes: any[]) {
+            if (changes[0].origin === 'setValue') return
+
             if (this.newMessage !== null && this.createNew) {
                 this.newMessage.code = this.text
-            } else if (this.codingSession !== undefined && this.message !== undefined) {
+            } else if (this.codingSession !== undefined && this.codingSession.id === this.message.id) {
                 const api = new DiffMatchPatch()
                 const patches = api.patch_make(this.message.code, this.text)
                 const patchStr = api.patch_toText(patches)
